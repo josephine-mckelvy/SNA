@@ -7,6 +7,8 @@ to convert Danielle Montagne's 2021-09-29 dataset to Jeffrey Smith's output (whe
 + Markdown files to document what the R code is and does (.rmd), knit into a Word document (.docx)
 + datasets (with numerical values) from SharePoint 
 (https://adminliveunc.sharepoint.com/:f:/r/sites/RADx-UPPublicationsAnalysis/Shared%20Documents/Network%20Analysis?csf=1&web=1&e=Yku2P8) 
++ process model of JS's inputs/outputs & programs, based on the SP information architecture (https://miro.com/app/board/uXjVPuznJ_k=/?share_link_id=344244582605)
+
 
 # Outputs:
 + Knit Word documents (.docx)
