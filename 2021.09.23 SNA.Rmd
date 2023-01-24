@@ -1,0 +1,776 @@
+---
+title: "Network Analysis for RADx-UP Scientific Collaboration (or coauthorship)"
+author: "Josephine McKelvy"
+date: "2023-01-24"
+output: html_document
+---
+Note that the `echo = FALSE` parameter was added to code chunks to prevent printing of the R code that generated the plot.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Output Author Affiliation Data - No Missing Author IDs
+
+```{r, echo=FALSE}
+# Goal: to create author IDs for missing cases and output back to the same dataset 
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("readxl")
+
+library(tidyverse)
+library(readxl)
+
+# read in (or import) raw affiliation excel file:
+authors_aff <- read_excel("2021.09.23 Author_Affiliations.xlsx")
+
+# create new variable (i.e., author_id2) where, if author_id is missing, enter the author's name for author_id; else print the existing author_id:
+authors_aff <- authors_aff %>%
+  mutate(author_id2 = case_when(is.na(author_id) ~ author , 
+                                TRUE ~ author_id))
+# check:
+authors_aff %>%
+  filter(is.na(author_id)) %>%
+  select(author_id, author_id2)
+authors_aff %>%
+  filter(is.na(author_id2)) %>%
+  select(author_id, author_id2)
+
+# output (or export) to *.csv:
+write_csv(authors_aff,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
+```
+
+## 2. Output Publication Data - With Dates
+
+```{r, echo=FALSE}
+# Goal: to add variables concerning date of publication and output back to the same dataset
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("readxl")
+#install.packages("lubricate")
+
+#library(tidyverse)
+#library(readxl)
+library(lubridate)
+
+# read in (or import) raw publication *.csv file:
+pubs <- read_csv("2021.09.23 Publications.csv")
+
+# create new variables (i.e., year_month_date, year_month, date_publish) that strings existing variables (i.e., year_cite, month, day) in YMD format, separated by single spaces:
+pubs <- pubs %>% 
+  mutate(year_month_date = paste(year_cite, month, day, sep= ' '),
+         year_month = paste(year_cite, month, sep= ' '),
+# if day is NA, use the new year_month_day variable into YMD format
+         date_publish = case_when(!is.na(day) ~ ymd(year_month_date),
+# if day and month are NA, use the new year_month variable into YM format
+                                  is.na(day) & !is.na(month) ~ ym(year_month)) )
+
+# optional: missing values for the variables year_cite, month, or day will result in cases failing to parse. replace NA in the variable, day, with the value of 1:
+#pubs$day[is.na(pubs$day)] <- 1
+
+# create a new variable (i.e, weeks_from_start) that computes the age of RADx-UP at the time of each publication. this will be useful for summary statistics, plots, etc. at different cut points (or scales) of time.
+
+# define 'start_date' of RADx-UP, roughly September 2020
+
+start_date <- "2020-08-27"
+
+# calculate weeks from start_date:
+pubs <- pubs %>%
+  mutate(weeks_from_start = 
+           as.numeric(difftime(date_publish, start_date, units = "weeks")))
+
+# create a function (i.e., month_function) since months have varying lengths
+month_function <- function(start_date, end_date) {
+  result <-NA
+  if (!is.na(end_date)){
+    result <-  length(seq.Date(as.Date(start_date), end_date, by = "month"))}
+  result
+}
+
+# apply month_function to the dataframe (i.e., pubs)
+pubs <- pubs %>%
+  mutate(months_from_start = 
+           as.numeric(lapply(date_publish, month_function, start_date=start_date)))
+
+# select columns to keep in the dataframe (i.e., everything but the YMD and YM format variables):
+pubs <- pubs  %>% 
+  select(!c(year_month_date, year_month))
+```
+
+## 3. Create Author Attribute Data
+
+```{r, echo=FALSE}
+# Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and organizational type
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("readxl")
+
+#library(tidyverse)
+#library(readxl)
+
+# read in (or import) recoded affiliation *.csv file:
+authors_aff <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
+
+# read in the content analysis data for the publications
+content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
+
+authors_aff <- authors_aff %>% 
+  filter(pmid %in% content$pmid)
+
+
+# now we need to create a data set that is one row per author id
+# for cases with a single organizational type (org) then
+# make org_type set to that; 
+# if multiple org types then use pre-determined rules to set 'main' org
+# 
+
+# only keep distinct rows, authors in there multiple times as may have authored
+# more than one paper, but here only need them once, as only
+# interested in attributes of author
+authors_aff_unique <- 
+    authors_aff %>%
+    select(author_id, author_id2, org, author) %>%
+    distinct(author_id, author_id2, org, .keep_all = T)
+
+# create id of how many time author id is data frame,
+# if in multiple times, means that org type different on different row for same author 
+authors_aff_unique <- authors_aff_unique %>% 
+  group_by(author_id2) %>% 
+  mutate(num = 1:n())
+
+#check
+  
+multiple_ids <- authors_aff_unique %>%
+  filter(num > 1) %>%
+  select(author_id2) 
+
+ authors_aff_unique %>%
+  filter(author_id2 %in% multiple_ids$author_id2) %>%
+  arrange(author_id2)
+
+#now pivot to wide format
+authors_aff_wide <- authors_aff_unique %>%
+  pivot_wider(names_from = num, values_from = c(org), names_prefix = "org")
+
+# now create new variable, org_final, that 
+# is based on org1 and org2, based on following rules:
+# if only org1 make org1; if missing on org1 but org2 exists make org2. 
+# if org1 and org2 not missing then use following rules,
+# code hierarchy for multiple affiliations:
+
+#Community
+#School
+#Government
+#Professional
+#Healthcare
+#Academic
+
+#create a little factor to make recoding easier below: 
+authors_aff_wide <-authors_aff_wide %>%
+  mutate(org1_factor = factor(org1, levels=c("Community", "School",
+                                             "Government",
+                                             "Professional", 
+                                             "Healthcare", "Academic")),
+         org2_factor = factor(org2, levels=c("Community", "School",
+                                             "Government",
+                                             "Professional", 
+                                             "Healthcare", "Academic")))
+
+#now creating org_final based on rules discussed above:
+authors_aff_wide <- authors_aff_wide %>%
+  mutate(org_final = case_when( is.na(org2) ~ org1 ,
+                          is.na(org1) & !is.na(org2) ~ org2,
+                          as.numeric(org1_factor) < as.numeric(org2_factor) 
+                          & (!is.na(org1) & !is.na(org2)) ~ org1,
+                          as.numeric(org2_factor) < as.numeric(org1_factor)  
+                          & (!is.na(org1) & !is.na(org2)) ~ org2,
+                          TRUE ~ org1)) %>%
+    select(!c("org1_factor", "org2_factor"))
+  
+
+# check
+table(authors_aff_wide$org_final, authors_aff_wide$org1,
+      useNA="always")
+
+table(authors_aff_wide$org_final, authors_aff_wide$org2,
+      useNA="always")
+
+table(authors_aff_wide$org_final, authors_aff_wide$org1, authors_aff_wide$org2,
+      useNA="always")
+
+
+
+# export data
+write_csv(authors_aff_wide, 
+          paste(wd, "network_inputs/", date,  
+                " Author_Attribute_Data.csv",
+                sep = ""))
+
+# author_id is id of author, with some NAs
+# author_id2 is id of author with no NAs (name put in where NA in author_id)
+# author is name of author
+# org1 is first org type (most authors only have 1)
+# org2 is second org type (if relevant)
+# org_final is combined, single org type for author based on filling
+# missing data where exists and hierarchy of org types (see above)
+
+
+
+
+```
+
+## 4.
+
+```{r, echo=FALSE}
+# R Code for RADx-UP Publication (Coauthorship Data) Project
+# Goal of this program is to read in content analysis data
+# and raw publication information, merge together and recode, reduce, etc.
+# into key variables about paper, like: 
+# topic, population, methods used, etc. 
+
+# reads in 2022.03.15 Publications_wdate_variables.csv
+# and Content Analysis 2022.03.15 CLEAN.xlsx
+# outputs 2022.03.15 Publication_Attribute_Data.csv
+
+# load useful packages
+library(tidyverse)
+library(readxl)
+library(lubridate)
+
+# First, we set the working directory
+wd <- '/Users/jsmith77/projects/unc_network_work/radx_up/data/'
+
+# read in raw publication data, based on march 2022 benchmark
+date <- '2022.03.15'
+
+pubs <- read_csv(paste(wd, "recoded_input_data/" ,  date,
+                         " Publications_wdate_variables.csv", sep = "")) %>%
+  # Transform publications data such that each row represents a unique publication
+  distinct(pmid, .keep_all = T)
+
+# note that some pmids repeated as certain papers
+# associated with multiple projects; here reduce to single row for each
+# pmid, will use first row that is distinct by default. only loses
+# information about project information, all else should be the same for 
+# pubs with multiple projects; will deal with project-publication stuff later
+
+pubs <- pubs %>% 
+  select(cycle, year_cite, month, day, 
+         date_publish, weeks_from_start, months_from_start, pmid, title)
+
+#################################################################################
+
+# read in content analysis data
+content <- read_excel(paste(wd, "input_data/",
+                         "Content Analysis ", date, " CLEAN.xlsx",
+                         sep = ""), 
+                   sheet = 1)
+
+# and now recode, simplify, and so on to get a couple of key variables
+# that might be of use when characterizing the publications.
+
+# renaming variables: 
+
+# variables that would be useful:
+#`Health Equity Focus` to health_equity_addressed
+
+# "Type of Analysis Identify for analytical studies whether the type of data analysis was qualitative, quantitative, both (mixed methods, literature review, or editorial." to type_of_analysis
+
+content_recode <- content %>%
+  rename(health_equity_addressed = `Health Equity Focus`, 
+         type_of_analysis  = `Type of Analysis Identify for analytical studies whether the type of data analysis was qualitative, quantitative, both (mixed methods, literature review, or editorial.`) %>%  
+  mutate(type_of_analysis = case_when(type_of_analysis == "N/A" ~ as.character(NA),
+                                      TRUE ~ type_of_analysis)) 
+
+table(content_recode$type_of_analysis)
+
+#making a urban/rural indicator
+content_recode <- content_recode %>% 
+  rename(Rural = Rural...29) %>%
+  mutate(urban_rural = case_when( (Rural == 1 & Urban==1) ~ "Both",
+                                  (Rural == 0 & Urban==1) ~ "Urban",
+                                  (Rural == 1 & Urban==0) ~ "Rural",
+                                  (Rural == 0 & Urban==0) ~ as.character(NA)),
+         target_pop_urban = case_when(urban_rural%in% c("Both",
+                                                               "Urban") ~ 1,
+                                             TRUE~0),
+         target_pop_rural = case_when(urban_rural%in% c("Both",
+                                                               "Rural") ~ 1,
+                                             TRUE~0))
+
+# check
+table(content_recode$urban_rural, 
+      content_recode$Urban,content_recode$Rural)
+
+table(content_recode$Urban, 
+      content_recode$target_population_urban)
+
+table(content_recode$Rural, content_recode$target_population_rural)
+
+#dealing with target population age:
+
+content_recode <- content_recode %>%
+  mutate(target_population_age = case_when(`Children and adolescents (< 18 yo)` == 1 ~ "children_target",
+         `Older Adults`  == 1 ~ "older_adults_target",
+         TRUE ~ "no_age_target") ) %>%
+  rename(target_pop_children = `Children and adolescents (< 18 yo)`, 
+         target_pop_older_adults = `Older Adults` )
+
+#check:
+table(content_recode$target_population_age
+      ,content_recode$target_pop_children)
+
+table(content_recode$target_population_age
+      ,content_recode$target_pop_older_adults)
+
+
+#dealing with target population, SES, homelessness, etc. 
+content_recode <- content_recode %>%
+  mutate(target_population_ses = case_when(`Low socioeconomic status` == 1 ~ "low_SES_target",
+                                           `Low socioeconomic status`  == 0 ~ "no_low_SES_target")) %>%
+  rename(target_pop_lower_ses = `Low socioeconomic status`)
+
+table(content_recode$target_population_ses
+      ,content_recode$target_pop_lower_ses)
+
+#dealing with target population, health care worker
+content_recode <- content_recode %>%
+  mutate(target_population_healthcare_worker = case_when(`Health care worker` == 1 ~ "healthcare_worker_target",
+                                                         `Health care worker`  == 0 ~ "no_healthcare_worker_target")) %>%
+  rename(target_pop_health_care_worker = `Health care worker`)
+
+#check
+table(content_recode$target_population_healthcare_worker
+      ,content_recode$target_pop_health_care_worker)
+
+#dealing with target population teacher
+content_recode <- content_recode %>%
+  mutate(target_population_teacher = case_when(Teacher == 1 ~ "teacher_target",
+                                                Teacher  == 0 ~ "no_teacher_target")) %>%
+  rename(target_pop_teacher = Teacher)
+
+#check
+table(content_recode$target_population_teacher, content_recode$target_pop_teacher)
+
+
+#dealing with target population, race
+content_recode <- content_recode %>%
+  mutate(target_population_race = 
+           case_when( (`Asian American` == 1 |
+                   `Native Hawaiian` == 1 |
+                    `Pacific Islander` == 1) & 
+                     `Black or African American` == 0 & 
+                     `Hispanic or Latino`== 0  ~ "asian",
+                  (`American Indian` == 1 |
+                    `Alaska Native` == 1) & 
+                    `Black or African American` == 0 & 
+                    `Hispanic or Latino`== 0 ~"nativeamerican",
+                  `Black or African American` == 1
+                  & `Hispanic or Latino` == 0~ "black",
+                  `Black or African American` == 0
+                  & `Hispanic or Latino` == 1 ~ "hispanic",
+                  `Black or African American` == 1
+                  & `Hispanic or Latino` == 1 & 
+                    `American Indian` == 0 & 
+                    `Asian American` == 0 ~ "black_and_hispanic"
+                  , `Black or African American` == 1
+                  & `Hispanic or Latino` == 1 & 
+                    `American Indian` == 1 & 
+                    `Asian American` == 0 ~ "black_and_hispanic_nativeamerican",
+                  `Black or African American` == 1
+                  & `Hispanic or Latino` == 1 & 
+                    `American Indian` ==0 & 
+                    `Asian American` == 1 ~ "black_and_hispanic_asian",
+                  TRUE ~ "no_race_target"),
+         target_race_binary = case_when(target_population_race == "no_race_target" ~ 0,
+                                        TRUE ~ 1)
+         ) %>%
+  rename(target_pop_black  = `Black or African American`,
+         target_pop_hispanic = `Hispanic or Latino`,
+         target_pop_nativeamerican = `American Indian`,
+         target_pop_asian = `Asian American`)
+
+# check:
+table(content_recode$target_population_race
+      ,content_recode$target_pop_black)
+
+table(content_recode$target_population_race
+      ,content_recode$target_pop_hispanic)
+
+table(content_recode$target_population_race, 
+      content_recode$target_pop_nativeamerican)
+
+table(content_recode$target_population_race, 
+      content_recode$target_pop_asian)
+
+table(content_recode$target_population_race, content_recode$target_race_binary)
+
+# Study Site
+#renaming variable names to clean things up:
+#also making the text of other site just a 0/1 did have other site or not
+study_site <- content_recode %>%
+  select(community_health_center = `Community health center`,
+         hospital = `Hospital` ,
+         in_home = `In-home` ,
+         prison = `Prison/jail` ,
+         care_facility = `Residential care facility`,
+         school = `School` ,
+         other = `Other Setting 1`) %>%
+  mutate(hospital =case_when(other == "university-based hospital system" ~ 1,
+                             TRUE~ hospital),
+         community_events = case_when(other %in% 
+                                        c("Community organization"
+                                          ,"Free community-based Latino testing events",
+                                          "Street outreach") ~1 ,
+                                      TRUE~0),
+         vaccination_sites = case_when(other %in% 
+                                         c("Vaccination sites: churches, clinics, and community events were the COVID-19 vaccine was being administered"
+                                           ,"Vaccination sites [outpatient primary care clinics, churches, community events, and outdoor vaccination drive through locations]") ~1 ,
+                                       TRUE~0),
+    other = case_when(is.na(other) | hospital == 1 | community_events==1|
+                        vaccination_sites == 1~ 0,
+                            !is.na(other) ~ 1))
+
+#writing a little function to help in recoding below
+which_func<-function(x,  y){names(which(x==y))[1]}
+
+#here we locate which column (community health center, school, etc.)
+#there is a 1 and then grabbing the columns name for that column and 
+#putting in variable called study_site_recode. also dealing with missing
+#values, if "miss" make it an NA. 
+
+study_site <- study_site  %>%
+  mutate(study_site_recode = apply(study_site , 1, which_func, y = 1))
+
+# note that a few publications had multiple sites
+# "community_health_center" "other": coded as community_health_center
+#"hospital"      "care_facility": coded as hospital
+
+# putting recoded version of study site back onto data frame of interest
+
+content_recode <- content_recode %>% 
+  mutate(study_site_recode = study_site$study_site_recode)
+
+#quick check:
+table(content_recode$study_site_recode, content_recode$`School`)
+table(content_recode$study_site_recode, content_recode$`Community health center`)
+
+
+#Study Design
+ 
+#renaming variable names to clean things up:
+study_design <- content_recode %>%
+  select(experimental = `Experimental`,
+         quasi_experimental = `Quasi-Experimental` ,
+         simulation = `Simulation` ,
+         observational = `Observational` ,
+         evaluation = `Evaluation` ,
+         formative = `Formative/exploratory`,
+         dissemination = `Dissemination & implementation`,
+         cost_benefit = `Cost-benefit` ,
+         quant_other = `Other Quantitative Method`,
+         focus_group = `Focus group` ,
+         interview = `Interview`,
+         survey = `Survey`,
+         qual_other = `Other Qualitative`
+         )
+
+#writing a little function to help in recoding below
+#take each study design, note if used it and paste it with other
+#study design types, as studies can have multiple study designs.
+
+which_func2 <-function(x,  y){paste(names(which(x==y)), collapse = ".")}
+
+study_design <- study_design  %>%
+  mutate(study_design_recode = apply(study_design , 1, which_func2, y = 1) ,
+         study_design_recode = case_when(study_design_recode == "" ~ "no_study_design",
+                                       TRUE ~ study_design_recode))
+
+#put study design recoded variables onto the content_recode data frame
+content_recode <- bind_cols(content_recode, study_design,
+                            .name_repair = "minimal")
+
+#quick check:
+
+table(study_design$study_design_recode, study_design$observational)
+
+###
+#single variable, combining detailed study design with type of analysis?
+
+#study_design %>% 
+#  mutate(type_of_analysis_detailed = case_when(
+#    TRUE ~ content_recode$type_of_analysis)
+#         )
+
+###
+
+# Community Engagement
+# now recoding community engagement, one variable if any community engagement
+# and then type of community engagement, detailed 
+# renaming variables and making other binary 0/1
+
+community_engage <- content_recode %>%
+  select(engage_broadcast_media = `Broadcast media (e.g., press conferences, TV interviews`,
+         engage_entertainment = `Entertainment activities (e.g., picnics, raffles` ,
+         engage_focus_groups = `Focus groups and/or surveys` ,
+         engage_meetings_events = `In-person or online community presentations or meetings (professional or educational events` ,
+         engage_social_media = `Internet/social media (e.g., email blast, blog, Facebook, YouTube`,
+         engage_partnerships = `Partnerships with community-based organizations` ,
+         engage_print_media = `Print media (e.g., press releases, newspaper articles`,
+         engage_other1 = `Other Community Engagement 1`,
+         engage_other2 = `Other Community Engagement 2`) %>%
+  mutate(engage_advisory_board = case_when(engage_other1  %in% 
+    c("ad-hoc advisory group of community leaders in each SYCT county todevelop a community-informed strategy for distribution of at-home test kits",
+      "Community Advisory Boards") ~1, TRUE ~ 0),
+    
+    engage_peer_influence= case_when(engage_other1  %in% 
+                                 c("Identifying frontline champions",
+                                   "Peer influencers",
+                                   "Community member referral networks") ~1, TRUE ~ 0),
+    engage_transportation= case_when(engage_other1  %in% 
+                                c("Street outreach; mobile vans",
+                                  "transportation to vaccination sites;  a network of public health/clinical health service providers to provide vaccinations; widespread vaccinations sites (ex. malls; removal of residential status as a barrier to obtain vaccines; public health worker delivery of vaccines in rural areas") ~1, 
+                              TRUE ~ 0),
+    
+    engage_partnerships = case_when(engage_other1  %in% c("COVID-19 data collection through the partnership for decision-making",
+                                                                  "Multi-disciplinary  collaborative  research and partnerships  focused  on  addressing community needs and building a translational science workforce to enhance project implementation and reach; faculty  members  engage  closely  with  local  health  departments,",
+                                                                  "Conducted an Asian-American and Native Hawaiian/Pacific Islander COVID-19 Needs Assessment")~1,
+                                                                  TRUE ~ engage_partnerships),
+    engage_meetings_events = case_when(engage_other1 %in% c("Free community-based Latino testing events") ~ 1,
+                            TRUE ~ engage_meetings_events),
+   engage_other1 = case_when(is.na(engage_other1) | engage_advisory_board ==1 |engage_peer_influence==1|engage_partnerships==1|
+                               engage_meetings_events==1|engage_transportation==1 ~ 0,
+                           !is.na(engage_other1) ~ 1),
+   engage_other2 = case_when(is.na(engage_other2) ~ 0,
+                            !is.na(engage_other2) ~ 1))
+ 
+community_engage  <- community_engage   %>%
+  mutate(community_engage_number = apply(community_engage[, ], 1, sum),
+         community_engage_binary = 1 * (community_engage_number > 0),
+        community_engage_recode = apply(community_engage  , 1, which_func2, y = 1) ,
+         community_engage_recode = case_when(community_engage_recode == "" ~ "no_engagement",
+                                         TRUE ~ community_engage_recode))
+
+print(community_engage, width=100000, n =15)
+
+
+table(community_engage$community_engage_recode)
+table(community_engage$community_engage_recode, community_engage$community_engage_binary)
+
+#put study design recoded variables onto the content_recode data frame
+content_recode <- bind_cols(content_recode, community_engage,
+                            .name_repair = "minimal")
+
+# TSBM (translational science benefits model)  vaccines
+
+# need to create 4 basic variables of 1 = did translational science model
+# and 0 = did not do it
+# then create variable of combinations, number of TSMB as well as binary indicator
+
+# here for vaccines
+
+# here we recode the main variables for clinical, public health, economic
+# and policy. recode so that a 1 is did that benefit and 0 otherwise 
+
+content_recode <- content_recode %>%
+  mutate(TSBM_vaccines_clinical = 
+           case_when((`Vaccination Clinical Guidelines` == 1 |
+                        `Vaccination Procedures` == 1 |
+                        `Vaccine Technology`==1) ~ 1,
+                     TRUE ~ 0),
+         TSBM_vaccines_public_health = 
+           case_when((`Community Vaccination Services` == 1 |
+                        `Vaccine Education Resources` == 1 |
+                        `Vaccination Accessibility`==1|
+                        `Vaccine Delivery and Uptake`==1|
+                        `Vaccine Hesitancy`==1|
+                        `Software and Digital Health for Vaccination`==1|
+                        `Public Health Vaccination Practices`==1) ~ 1,
+                     TRUE ~ 0),
+         TSBM_vaccines_economic = 
+           case_when((`Vaccine License Agreements and Patents` == 1 |
+                        `Vaccine Non-Profit or Commercial Entities` == 1 |
+                        `Vaccine Cost Effectiveness`==1|
+                        `Vaccine Cost Savings`==1) ~ 1,
+                     TRUE ~ 0),
+         TSBM_vaccines_policy = 
+           case_when((`Vaccination Advisory Activities` == 1 |
+                        `Vaccination Policies and Legislation` == 1) ~ 1,
+                     TRUE ~ 0) )
+
+  
+#now creating extra variables, number of TSBM benefits, pasted together
+#benefits they did and binary indicator if did any benefit
+
+TSBM_vaccince_columns <- c("TSBM_vaccines_clinical", "TSBM_vaccines_public_health",
+                           "TSBM_vaccines_economic", "TSBM_vaccines_policy")
+
+content_recode  <- content_recode   %>%
+  mutate(TSBM_vaccines_number = apply(content_recode[, TSBM_vaccince_columns]
+                                         , 1, sum),
+         TSBM_vaccines_binary = 1 * (TSBM_vaccines_number > 0),
+         TSBM_vaccines_recode = apply(content_recode[, TSBM_vaccince_columns]  , 1, which_func2, y = 1) ,
+         TSBM_vaccines_recode = case_when(TSBM_vaccines_recode == "" ~ "no_TSBM_vaccines",
+                                             TRUE ~ TSBM_vaccines_recode))
+
+#quick check:
+print(content_recode[, c(TSBM_vaccince_columns, "TSBM_vaccines_binary", 
+                         "TSBM_vaccines_recode", "TSBM_vaccines_number")],
+      width=1000)
+
+
+table(content_recode$TSBM_vaccines_binary, content_recode$TSBM_vaccines_number)
+table(content_recode$TSBM_vaccines_binary, content_recode$TSBM_vaccines_recode)
+
+
+# TSBM (translational science benefits model) testing
+# same thing as above, but now for testing
+
+content_recode <- content_recode %>%
+  mutate(TSBM_testing_clinical = 
+           case_when((`Testing Clinical Guidelines` == 1 |
+                        `Testing Procedures` == 1 |
+                        `Testing Technology`==1) ~ 1,
+                     TRUE ~ 0),
+         TSBM_testing_public_health = 
+           case_when((`Community Testing Services` == 1 |
+                        `Testing Education Resources` == 1 |
+                        `Testing Accessibility`==1|
+                        `Testing Hesitancy`==1|
+                        `Software and Digital Health for Testing`==1|
+                        `Public Health Testing Practices`==1) ~ 1,
+                     TRUE ~ 0),
+         
+         TSBM_testing_economic = 
+           case_when((`Testing License Agreements and Patents` == 1 |
+                        `Testing Non-Profit or Commercial Entities` == 1 |
+                        `Testing Cost Effectiveness`==1|
+                        `Testing Cost Savings`==1) ~1 ,
+                     TRUE ~ 0),
+         TSBM_testing_policy =
+           case_when((`Testing Advisory Activities` == 1 |
+                        `Testing Policies and Legislation` == 1) ~ 1,
+                     TRUE ~ 0) )
+
+
+#now creating extra variables, number of TSBM benefits, pasted together
+#benefits they did and binary indicator if did any benefit
+
+TSBM_testing_columns <- c("TSBM_testing_clinical", "TSBM_testing_public_health",
+                           "TSBM_testing_economic", "TSBM_testing_policy")
+
+content_recode  <- content_recode   %>%
+  mutate(TSBM_testing_number = apply(content_recode[, TSBM_testing_columns]
+                                      , 1, sum),
+         TSBM_testing_binary = 1 * (TSBM_testing_number > 0),
+         TSBM_testing_recode = apply(content_recode[, TSBM_testing_columns]  , 1, which_func2, y = 1) ,
+         TSBM_testing_recode = case_when(TSBM_testing_recode == "" ~ "no_TSBM_vaccines",
+                                          TRUE ~ TSBM_testing_recode))
+
+#quick check:
+print(content_recode[, c(TSBM_testing_columns, "TSBM_testing_binary", 
+                         "TSBM_testing_recode", "TSBM_testing_number")],
+      width=1000)
+
+table(content_recode$TSBM_testing_binary, content_recode$TSBM_testing_number)
+table(content_recode$TSBM_testing_binary, content_recode$TSBM_testing_recode)
+
+
+#rename some health variables
+
+content_recode <- content_recode %>% rename(
+  Neurological = `Neurological disorders (includes Guillain-Barre syndrome)`,
+  HIV = `HIV/AIDS`,
+  HepC = `Hepatitis C`,
+ Diabetes = `Diabetes, Hyperglycemia or Hypoglycemia`)
+
+
+#reduce to key variables of interest:
+
+vars <- c("pmid", "urban_rural", "type_of_analysis" ,
+          "health_equity_addressed", "target_population_age",
+          "target_pop_children", "target_pop_older_adults", 
+          "target_population_ses", "target_pop_lower_ses",
+          "target_population_healthcare_worker", "target_pop_health_care_worker", 
+          "target_population_teacher", "target_pop_teacher",
+          "target_pop_urban", "target_pop_rural",
+          "target_population_race", "target_race_binary",
+          "target_pop_black", "target_pop_hispanic", "target_pop_nativeamerican", 
+          "target_pop_asian",
+          "study_site_recode", colnames(study_design),
+          colnames(community_engage), TSBM_vaccince_columns, "TSBM_vaccines_binary", 
+            "TSBM_vaccines_recode", "TSBM_vaccines_number",
+          TSBM_testing_columns, "TSBM_testing_binary", 
+            "TSBM_testing_recode", "TSBM_testing_number",
+          "Neurological",  "HIV", "HepC", "Diabetes", "Obesity", "Preeclampsia")
+
+ 
+content_recode <- content_recode %>% select(all_of(vars))
+
+# merge content analysis data onto raw publication data and export
+
+publication_attributes <- left_join(x = content_recode, y = pubs, by = "pmid")
+
+#only keep publication if on pub-author edgelist?
+temp_edges <- read_csv(paste(wd, "recoded_input_data/" , date,
+                              " Author Affiliations_no_missing_ids.csv", sep = ""))
+
+
+publication_attributes <- publication_attributes  %>%
+  filter(pmid %in% temp_edges$pmid)
+
+  
+#export as csv
+write_csv(publication_attributes, 
+          paste(wd, "network_inputs/", date,
+                " Publication_Attribute_Data.csv", sep = ""))
+
+
+
+```
+
+## 5.
+
+```{r, echo=FALSE}
+
+```
+
+## 6.
+
+```{r, echo=FALSE}
+
+```
+
+## 7.
+
+```{r, echo=FALSE}
+
+```
+
+## 8.
+
+```{r, echo=FALSE}
+
+```
+
+## 9.
+
+```{r, echo=FALSE}
+
+```
+
+## 10.
+
+```{r, echo=FALSE}
+
+```
+
+## 11.
+
+```{r, echo=FALSE}
+
+```
