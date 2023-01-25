@@ -1,4 +1,4 @@
-pmid,author,author_id,authors_aff,org,author_id2
+pmid,author_name,author_id,author_aff,author_type,author_id2
 33471114,Acri T,8285535700,"Public Health Management Corporation, Philadelphia, PA, United States",Professional,8285535700
 34294425,Akintobi T,6506993064,"Department of Community Health & Preventive Medicine, Morehouse School of Medicine, Atlanta, Georgia, Georgia",Academic,6506993064
 33228253,Altomare NJ,57220026426,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220026426
