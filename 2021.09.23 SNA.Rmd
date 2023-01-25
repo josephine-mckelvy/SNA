@@ -28,23 +28,124 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readxl)
 
-# read in (or import) raw affiliation excel file:
-authors_aff <- read_excel("2021.09.23 Author_Affiliations.xlsx")
+# read in (or import) raw Author Affiliation Excel file:
+author_affil <- read_excel("2021.09.23 Author_Affiliations.xlsx")
 
-# create new variable (i.e., author_id2) where, if author_id is missing, enter the author's name for author_id; else print the existing author_id:
-authors_aff <- authors_aff %>%
+# create new variable (i.e., author_id2) (in a new dataframe, author-affil) where, if author_id is missing, enter the author's name for author_id; else print the existing author_id:
+author_affil <- author_affil %>%
   mutate(author_id2 = case_when(is.na(author_id) ~ author_name , 
                                 TRUE ~ author_id))
-# check:
-authors_aff %>%
+# check--are there any missing author_id or author_id2?:
+author_affil %>%
   filter(is.na(author_id)) %>%
   select(author_id, author_id2)
-authors_aff %>%
+author_affil %>%
   filter(is.na(author_id2)) %>%
   select(author_id, author_id2)
 
-# output (or export) the authors_aff dataframe you created to a *.csv file:
-write_csv(authors_aff,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
+# output (or export) the author_affil dataframe you created to a *.csv file:
+write_csv(author_affil,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
+```
+
+## 3. Create Author Attribute Data
+
+```{r}
+# Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and organizational type per author
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("readxl")
+
+#library(tidyverse)
+#library(readxl)
+
+# read in (or import) recoded Author Affiliation *.csv file:
+#author_affil <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
+
+# only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
+#content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
+
+# sort author affiliation dataframe by pmid variable (?):
+#authors_aff <- authors_aff %>% 
+#  filter(pmid %in% content$pmid)
+
+# duplicate authors may have authored more than one paper, but we only need them once since we're only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
+author_affil_unique <- author_affil %>%
+  # select useful columns to keep in the dataframe:
+    select(author_name, author_id, author_id2, author_type) %>%
+  # if the following variables are distinct, then keep the values (?):
+    distinct(author_id, author_id2, author_type, .keep_all = TRUE)
+
+author_affil_unique <- author_affil_unique %>% 
+# sort by the variable, author_id2:
+  group_by(author_id2) %>% 
+# create a variable (i.e., type_num) that numbers how many times author_id2 is in the dataframe with a unique org type:
+  mutate(type_num = 1:n())
+# if beyond 1, then the org type was different on different rows for the same author (e.g., author_id2 "7005932893" was listed as "academic" and "healthcare" on separate papers) 
+
+# check--create a new dataframe (i.e., multi_type) that pulls the author_id2 of rows where the type_num value is more than 1:
+multi_type <- author_affil_unique %>%
+  filter(type_num > 1) %>%
+  select(author_id2) 
+
+# sort the author_id2 in this dataframe (?):
+ author_affil_unique %>%
+  filter(author_id2 %in% multi_type$author_id2) %>%
+  arrange(author_id2)
+
+# create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed "type") for multiple org types per author:
+author_affil_wide <- author_affil_unique %>%
+  pivot_wider(names_from = type_num, values_from = c(author_type), names_prefix = "type")
+
+# factor the type1 & type2 variables in this hierarchy (i.e., community = level 1, school = level 2, etc.): 
+author_affil_wide <-author_affil_wide %>%
+  mutate(type1_factor = factor(type1, levels=c("Community", 
+                                               "School",
+                                               "Government",
+                                               "Professional", 
+                                               "Healthcare", 
+                                               "Academic")),
+         type2_factor = factor(type2, levels=c("Community", 
+                                               "School",
+                                               "Government",
+                                               "Professional", 
+                                               "Healthcare", 
+                                               "Academic")))
+# thus we would prioritize "healthcare" over "academic" for author "7005932893"
+
+# create a new variable (i.e., final_type) that assigns a main org type for authors with multiple affiliations, 
+# based on the following pre-determined rules:
+author_affil_wide <- author_affil_wide %>%
+  mutate(final_type = case_when( 
+   # if only type1 value exists, then assign the value of type1:
+                          is.na(type2) ~ type1,
+   # if type1 value is missing but type2 exists, then assign the value of type2: 
+                          is.na(type1) & !is.na(type2) ~ type2,
+   # if both type1 and type2 exist, then assign based on the hierarchy of the factored variables:
+                          as.numeric(type1_factor) < as.numeric(type2_factor) 
+                          & (!is.na(type1) & !is.na(type2)) ~ type1,
+                          as.numeric(type2_factor) < as.numeric(type1_factor)  
+                          & (!is.na(type1) & !is.na(type2)) ~ type2,
+                          TRUE ~ type1)) %>%
+   #select useful columns to keep in the dataframe (i.e., everything but the factor variables used to compute other variables):
+    select(!c("type1_factor", "type2_factor"))
+
+# check--summarize cross-tab counts of each org type (not sure what to look for in the cross-check):
+table(author_affil_wide$final_type, 
+      author_affil_wide$type1,
+      useNA="always")
+
+table(author_affil_wide$final_type, 
+      author_affil_wide$type2,
+      useNA="always")
+
+table(author_affil_wide$final_type, 
+      author_affil_wide$type1, 
+      author_affil_wide$type2,
+      useNA="always")
+
+# output (or export) the authors_aff_wide dataframe you created to a *.csv file:
+write_csv(author_affil_wide, "2021.09.23 Author_Attribute_Data.csv")
 ```
 
 ## 2. Output Publication Data - With Dates
@@ -55,13 +156,13 @@ write_csv(authors_aff,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
 # install (for the first time only) and load packages:
 #install.packages("tidyverse")
 #install.packages("readxl")
-#install.packages("lubricate")
+#install.packages("lubridate")
 
 #library(tidyverse)
 #library(readxl)
 library(lubridate)
 
-# read in (or import) raw publication *.csv file:
+# read in (or import) raw Publication *.csv file:
 pubs <- read_csv("2021.09.23 Publications.csv")
 
 # optional: missing values for the variables year_cite, month, or day will result in cases failing to parse. replace NA in the variable, day, with the value of 1 before creating new variables with day:
@@ -86,147 +187,42 @@ pubs <- pubs %>%
   mutate(weeks_from_start = 
            as.numeric(difftime(date_publish, start_date, units = "weeks")))
 
-# create a function (i.e., month_function) since months have varying lengths:
+# create a function (i.e., month_function) to define how long a "month" is (?):
 month_function <- function(start_date, end_date) {
-  result <-NA
+  result <- NA
   if (!is.na(end_date)){
-    result <-  length(seq.Date(as.Date(start_date), end_date, by = "month"))}
+    result <- length(seq.Date(as.Date(start_date), end_date, by = "month"))}
   result
 }
 
-# apply month_function to the dataframe (i.e., pubs):
+# apply month_function to the dataframe (i.e., pubs) to create a new variable (i.e., months_from_start) for how many months old the pubs are:
 pubs <- pubs %>%
   mutate(months_from_start = 
            as.numeric(lapply(date_publish, month_function, start_date=start_date)))
 
-# select columns to keep in the dataframe (i.e., everything but the YMD and YM format variables used to compute other variables):
+# select useful columns to keep in the dataframe 
+# (i.e., everything but the YMD and YM format variables used to compute other variables):
 pubs <- pubs  %>% 
   select(!c(year_month_date, year_month))
 
 # output (or export) the pubs dataframe you created to a *.csv file:
 write_csv(pubs,"2021.09.23 Publications_with_date_variables.csv")
 ```
-
-## 3. Create Author Attribute Data
+## 4. Optional: Create Publication Attribute Data
 
 ```{r}
-# Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and organizational type per author
+# Goal: to clean raw content analysis data and merge with recoded Publication *.csv file (see #2.) 
 
 # install (for the first time only) and load packages:
 #install.packages("tidyverse")
 #install.packages("readxl")
-
-#library(tidyverse)
-#library(readxl)
-
-# read in (or import) recoded affiliation *.csv file:
-authors_aff <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
-
-# read in the content analysis data for the publications (not sure why):
-#content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
-
-# sort content dataframe by pmid variable (?):
-#authors_aff <- authors_aff %>% 
-#  filter(pmid %in% content$pmid)
-
-# duplicate authors may have authored more than one paper, but we only need them once since we're only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
-authors_aff_unique <- authors_aff %>%
-# select columns to keep in the dataframe:
-    select(author_name, author_id, author_id2, author_type) %>%
-# if the following variables are distinct, then keep the values (?):
-    distinct(author_id, author_id2, author_type, .keep_all = TRUE)
-
-authors_aff_unique <- authors_aff_unique %>% 
-# sort by the variable, author_id2:
-  group_by(author_id2) %>% 
-# create a variable (i.e., type_num) that numbers how many times author_id2 is in the dataframe with a distinct org type:
-  mutate(type_num = 1:n())
-# if beyond 1, then the org type was different on different rows for the same author (e.g., author_id2 "7005932893" was listed as "academic" and "healthcare" on separate papers) 
-
-# check--create a new dataframe (i.e., multiple_ids) that pulls the author_id2 of rows where the type_num value is more than 1:
-multiple_ids <- authors_aff_unique %>%
-  filter(type_num > 1) %>%
-  select(author_id2) 
-
-# sort the author_id2 in this dataframe (?):
- authors_aff_unique %>%
-  filter(author_id2 %in% multiple_ids$author_id2) %>%
-  arrange(author_id2)
-
-# create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed "type") for multiple org types per author:
-authors_aff_wide <- authors_aff_unique %>%
-  pivot_wider(names_from = type_num, values_from = c(author_type), names_prefix = "type")
-
-# factor the type1 & type2 variables in this hierarchy (i.e., community = level 1, school = level 2, etc.): 
-authors_aff_wide <-authors_aff_wide %>%
-  mutate(type1_factor = factor(type1, levels=c("Community", 
-                                               "School",
-                                               "Government",
-                                               "Professional", 
-                                               "Healthcare", 
-                                               "Academic")),
-         type2_factor = factor(type2, levels=c("Community", 
-                                               "School",
-                                               "Government",
-                                               "Professional", 
-                                               "Healthcare", 
-                                               "Academic")))
-# thus we would prioritize "healthcare" over "academic" for author "7005932893"
-
-# create a new variable (i.e., org_final) that assigns a main org type for authors with multiple affiliations, 
-# based on the following pre-determined rules:
-authors_aff_wide <- authors_aff_wide %>%
-  mutate(org_final = case_when( 
-   # if only type1 value exists, then assign the value of type1:
-                          is.na(type2) ~ type1,
-   # if type1 value is missing but type2 exists, then assign the value of type2: 
-                          is.na(type1) & !is.na(type2) ~ type2,
-   # if both type1 and type2 exist, then assign based on the hierarchy of the factored variables:
-                          as.numeric(type1_factor) < as.numeric(type2_factor) 
-                          & (!is.na(type1) & !is.na(type2)) ~ type1,
-                          as.numeric(type2_factor) < as.numeric(type1_factor)  
-                          & (!is.na(type1) & !is.na(type2)) ~ type2,
-                          TRUE ~ type1)) %>%
-#select columns to keep in the dataframe (i.e., everything but the factor variables used to compute other variables):
-    select(!c("type1_factor", "type2_factor"))
-
-# check--summarize cross-tab counts of each org type (not sure what to look for in the cross-check):
-table(authors_aff_wide$org_final, authors_aff_wide$type1,
-      useNA="always")
-
-table(authors_aff_wide$org_final, authors_aff_wide$type2,
-      useNA="always")
-
-table(authors_aff_wide$org_final, authors_aff_wide$type1, authors_aff_wide$type2,
-      useNA="always")
-
-# output (or export) the authors_aff_wide dataframe you created to a *.csv file:
-write_csv(authors_aff_wide, "2021.09.23 Author_Attribute_Data.csv")
-
-# author_id is id of author, with some NAs
-# author_id2 is id of author with no NAs (name put in where NA in author_id)
-# author is name of author
-# org1 is first org type (most authors only have 1)
-# org2 is second org type (if relevant)
-# org_final is combined, single org type for author based on filling
-# missing data where exists and hierarchy of org types (see above)
-```
-
-## 4. Create Publication Attribute Data
-
-```{r}
-# Goal: to clean raw content analysis data and merge with recoded publication *.csv file (see #2.) 
-
-# install (for the first time only) and load packages:
-#install.packages("tidyverse")
-#install.packages("readxl")
-#install.packages("lubricate")
+#install.packages("lubridate")
 
 #library(tidyverse)
 #library(readxl)
 #library(lubridate)
 
-# read in the content analysis data for the publications:
+# read in raw content analysis Excel file for the publications:
 content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
 
 ################################################################################
@@ -429,16 +425,14 @@ site_recode <- content_recode %>%
            vaccination_sites == 1 ~ 0,
            !is.na(other) ~ 1))
 
-#writing a little function to help in recoding below
+# create a function (i.e., which_site) to help with recoding... (?):
 which_site <- function(x, y){names(which(x==y))[1]}
 
-#here we locate which column (community health center, school, etc.)
-#there is a 1 and then grabbing the columns name for that column and 
-#putting in variable called study_site_recode. also dealing with missing
-#values, if "missing" make it an NA. 
+#here we locate which column (e.g., community health center, school, etc.)
+#there is a value of 1 and grab the column's name for the new categorical variable, study_site_recode (?) 
 
 site_recode <- site_recode  %>%
-  mutate(study_site_recode = apply(site_recode, 1, which_site, y = 1))
+  mutate(study_site = apply(site_recode, 1, which_site, y = 1))
 
 # note that a few publications had multiple sites
 # "community_health_center" "other": coded as community_health_center
@@ -447,13 +441,13 @@ site_recode <- site_recode  %>%
 # putting recoded version of study site back onto data frame of interest
 
 content_recode <- content_recode %>% 
-  mutate(study_site_recode = site_recode$study_site_recode)
+  mutate(study_site = site_recode$study_site)
 
 #quick check:
-table(content_recode$study_site_recode, 
+table(content_recode$study_site, 
       content_recode$`School`)
 
-table(content_recode$study_site_recode, 
+table(content_recode$study_site, 
       content_recode$`Community health center`)
 
 ################################################################################
@@ -476,24 +470,24 @@ design_recode <- content_recode %>%
          survey = `Survey`,
          qual_other = `Other Qualitative`)
 
-#writing a little function to help in recoding below
+# create a function (i.e., which_design) to help with recoding... (?):
+which_design <-function(x, y){paste(names(which(x==y)), collapse = ".")}
+
 #take each study design, note if used it and paste it with other
 #study design types, as studies can have multiple study designs.
 
-which_design <-function(x, y){paste(names(which(x==y)), collapse = ".")}
-
 design_recode <- design_recode  %>%
-  mutate(study_design_recode = apply(design_recode , 1, which_design, y = 1) ,
-         study_design_recode = case_when(
-           study_design_recode == "" ~ "no_study_design",
-           TRUE ~ study_design_recode))
+  mutate(study_design = apply(design_recode , 1, which_design, y = 1) ,
+         study_design = case_when(
+           study_design == "" ~ "no_study_design",
+           TRUE ~ study_design))
 
 #put study design recoded variables onto the content_recode data frame
 content_recode <- bind_cols(content_recode, design_recode,
                             .name_repair = "minimal")
 
 #quick check:
-table(design_recode$study_design_recode, 
+table(design_recode$study_design, 
       design_recode$observational)
 
 ################################################################################
@@ -575,7 +569,7 @@ content_recode <- bind_cols(content_recode, community_engage,
 
 ################################################################################
 
-# TSBM (translational science benefits model)  vaccines
+# TSBM (translational science benefits model): vaccines
 
 # need to create 4 basic variables of 1 = did translational science model
 # and 0 = did not do it
@@ -644,7 +638,7 @@ table(content_recode$TSBM_vaccines_binary,
 
 ################################################################################
 
-# TSBM (translational science benefits model) testing
+# TSBM (translational science benefits model): testing
 
 content_recode <- content_recode %>%
   mutate(
@@ -753,7 +747,7 @@ vars <- c("pmid",
 
 ################################################################################
 
-# read in (or import) recoded publication *.csv file:
+# read in (or import) recoded Publication *.csv file:
 pubs <- read_csv("2021.09.23 Publications_with_date_variables.csv") %>%
 # duplicate PMIDs may be associated more than one project, but we only need them once since we're only interested in the attributes of the paper. if the following variables are distinct (i.e., unique PubMed ID numbers), then keep the values (?):
   distinct(pmid, .keep_all = T)
@@ -772,28 +766,249 @@ publication_attributes <- left_join(x = content_recode, y = pubs, by = "pmid")
 #only keep publication if on pub-author edgelist?
 temp_edges <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
 
+# sort pub dataframe by pmid variable (?):
 publication_attributes <- publication_attributes  %>%
   filter(pmid %in% temp_edges$pmid)
 
 # output (or export) the publication_attributes dataframe you created to a *.csv file:
 write_csv(publication_attributes, "2021.09.23 Publication_Attribute_Data.csv")
 ```
-
-## 5.
-
-```{r, echo=FALSE}
-
-```
-
-## 6.
+## 5. Create Author-Publication Edgelist
 
 ```{r}
+# Goal: to merge recoded Author Affiliations *.csv file (see #1.) with recoded Publication *.csv file (see #2.)
 
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("readxl")
+#install.packages("lubridate")
+
+#library(tidyverse)
+#library(readxl)
+#library(lubridate)
+
+# read in (or import) recoded Author Affiliation *.csv file:
+#author_affil <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
+
+#select useful columns to keep in the dataframe (i.e., just PMIDs & author IDs):
+author_affil <- author_affil %>%
+  select(pmid, author_id, author_id2)
+
+# read in (or import) recoded Publication *.csv file and merge key edge attributes on the publication onto the edgelist: 
+pubs <- read_csv("2021.09.23 Publications_with_date_variables.csv") %>%
+  distinct(pmid, .keep_all = TRUE)
+# duplicate PMIDs may be associated more than one project, but we only need them once since we're only interested in the attributes of the paper. if the following variables are distinct (i.e., unique PubMed ID numbers), then keep the values.
+
+#select useful columns to keep in the dataframe:
+pubs <- pubs %>% 
+  select(cycle, year_cite, month, day, date_publish, weeks_from_start, months_from_start, pmid)
+
+# create a new dataframe (i.e., author_pub_edgelist) that uses left_join to map edge attributes from pubs into the edgelist, based on PMIDs as the identifier:
+author_pub_edgelist <- left_join(x = author_affil, y = pubs, by = "pmid")
+
+# reorder the columns:
+author_pub_edgelist <- author_pub_edgelist %>% 
+  select(author_id2, pmid, cycle:months_from_start, author_id)
+
+# only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
+#content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
+
+# sort edgelist dataframe by pmid variable (?):
+#author_pub_edgelist <- author_pub_edgelist %>% 
+#  filter(pmid %in% content$pmid)
+
+# output (or export) the author_pub_edgelist dataframe you created to a *.csv file:
+write_csv(author_pub_edgelist, "2021.09.23 Author_Pub_Edgelist.csv")
 ```
 
-## 7.
+## 6. Optional: Create Project-Publication List
 
 ```{r}
+# Goal: to output a list showing which projects are associated with each publication (pmid)
+
+# install (for the first time only) and load packages
+#install.packages("tidyverse")
+#install.packages("readxl")
+#install.packages("lubridate")
+
+#library(tidyverse)
+#library(readxl)
+#library(lubridate)
+
+# read in (or import) recoded Publications *.csv file 
+#pubs <- read_csv("2021.09.23 Publications_with_date_variables.csv")
+
+# only keep pubs that are in the content data set? read in the content analysis data for the publications:
+content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
+
+# sort pubs dataframe by pmid variable (?):
+pubs <- pubs %>% 
+  filter(pmid %in% content$pmid)
+
+# create a function (i.e., which_proj) to grab the project number, for a given variable (e.g., pmid):
+which_proj <- function(dat, var, id){
+    dat$proj_num[dat[, var] == id]
+  }
+
+# define unique set of pmids
+pmids <- unique(pubs$pmid)
+
+# create a data frame (?) (i.e., list_of_projects) that grabs all projects associated with a pmid 
+list_of_projects <- lapply(pmids, which_proj, dat = pubs, var = "pmid")
+# not sure what to do with missing column: Warning: Unknown or uninitialised column: `proj_num`.
+
+names(list_of_projects) <- pmids
+
+# save out list of projects for each pmid:
+save(list_of_projects, file = "2021.09.23 Project_Publication_List.Rdata")
+```
+
+## 7. Create Co-Authorship Network--finally!
+
+```{r}
+# Goal: to construct basic igraph objects with:
+# Author_Attribute_Data.csv (see #3.)
+# Publication_Attribute_Data.csv (see #4.)
+# Publication_Author_Edgelist.csv (see #5.)
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("igraph")
+
+#library(tidyverse)
+library(igraph)
+
+# read in (or import) recoded Author Attribute *.csv file:
+author_affil_wide <- read_csv("2021.09.23 Author_Attribute_Data.csv")
+
+# read in (or import) recoded Publication Attribute *.csv file and set pmid to character:
+publication_attributes <- read_csv("2021.09.23 Publication_Attribute_Data.csv")
+                                   col_type = cols(pmid = col_character())
+
+#read in (or import) recoded Edgelist *.csv files and set pmid to character:
+author_pub_edgelist <- read_csv("2021.09.23 Author_Pub_Edgelist.csv")
+                                   col_type = cols(pmid = col_character()) 
+
+#######
+# First a bit of compiling of input data before constructing the networks
+
+# Putting together a combined data set of publication and author attributes
+
+# first, making a single id and type variable and putting it on publication and
+# author attribute data frames
+
+# publication first: 
+
+publication_attributes <- publication_attributes  %>%
+  mutate(ids = pmid, type = "publication")
+
+# and now author
+
+author_affil_wide <- author_affil_wide  %>%
+  mutate(ids = author_id2, type = "author")
+
+# and now we create a shared data.frame, where stacking author attributes on top of
+# publication attributes into a single data.frame
+
+# first we define which attributes are shared across the two data.frames
+
+shared_var_names <- c("ids", "type")
+
+#now created stacked data with authors on top
+stacked.df <- bind_rows(author_affil_wide %>% select(all_of(shared_var_names)), 
+                    pubs %>% select(all_of(shared_var_names)) )
+
+# And now let's move to the author specific attributes, putting in NAs for the publications
+
+temp_pub_data <- author_affil_wide[1, ]
+temp_pub_data[1, ] <- NA
+temp_pub_data_NA <- tibble(temp_pub_data, .rows = nrow(publication_attributes))
+
+# put together author and publication data for author specific attributes,
+# excluding the shared ones
+
+author_specific <- bind_rows(author_affil_wide %>% select(-shared_var_names), 
+                             temp_pub_data_NA %>%select(-shared_var_names))
+
+# and now the reverse, doing publication specific attributes
+temp_author_data <- pubs[1, ]
+temp_author_data[1, ] <- NA
+temp_author_data_NA <- tibble(temp_author_data, .rows = nrow(author_affil_wide))
+
+publication_specific <- bind_rows(temp_author_data_NA %>% select(-shared_var_names),
+                                  pubs %>% select(-shared_var_names))
+
+#and now putting all together
+
+attributes_authors_publications  <- bind_cols(shared, author_specific,
+                                              publication_specific)
+
+# and let's also add sender/receiver vars in the edgelist for convenience:
+# sender is author (author_id2), and receiver publication (pmid).
+
+author_publication_edgelist <- author_publication_edgelist %>% 
+  mutate(sender = author_id2, receiver = pmid) %>%
+  select(sender, receiver, cycle:author_id, author_id2, pmid)
+
+# Constructing the Network
+# Here we take the edgelist, two attribute files and construct the igraph object
+# useful for plotting and summary statistics.
+
+
+# Let's create a 'named' type vector, showing if node is author or publication
+# with name set to id
+attributes_authors_publications <- attributes_authors_publications %>%
+  mutate(type_binary = 1*(type == "publication"))
+
+type <- attributes_authors_publications$type_binary
+names(type) <- attributes_authors_publications$ids
+
+# now creating network in igraph, with types set to type and edges
+# grabbed from sender/receiver columns, need to transpose and make the 2 column
+# matrix a vector to get in format for igraph: 
+
+# take out any edges that are not in attribute file?
+#author_publication_edgelist <- author_publication_edgelist %>%
+#  filter(sender %in% names(type) & receiver %in% names(type))
+
+edges <- c(t(author_publication_edgelist %>% select(sender, receiver)))
+
+
+coauthorship_net <- make_bipartite_graph(types = type, edges = edges)
+
+
+#check to make this sure this looks right and grab useful indicator vectors:
+
+type_from_igraph <- V(coauthorship_net)$type
+table(type_from_igraph)
+
+#identify which are authors
+is_author_type <- type_from_igraph == FALSE
+
+#identify which are publications
+is_publication_type <- type_from_igraph == TRUE
+
+# Putting attributes onto object:
+
+coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
+                                   name = "org_final", 
+                                   value = attributes_authors_publications$org_final)
+
+#getting name of publication as a vertex attribute
+coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
+                                    name = "title", 
+                                    value = attributes_authors_publications$title)
+
+# saving out network and combined attribute file
+
+
+save(coauthorship_net, attributes_authors_publications, 
+     file = paste(wd, "network_inputs/", date,  
+                  " Coauthorship Network igraph.Rdata", sep = ""))
+
+
+
+
 
 ```
 
