@@ -44,7 +44,7 @@ author_affil %>%
   select(author_id, author_id2)
 
 # output (or export) the author_affil dataframe you created to a *.csv file:
-write_csv(author_affil,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
+write_csv(author_affil, "2021.09.23 Author_Affiliations_no_missing_ids.csv")
 ```
 
 ## 3. Create Author Attribute Data
@@ -59,17 +59,17 @@ write_csv(author_affil,"2021.09.23 Author_Affiliations_no_missing_ids.csv")
 #library(tidyverse)
 #library(readxl)
 
-# read in (or import) recoded Author Affiliation *.csv file:
+# read in (or import) recoded Author Affiliation *.csv file (if not already in the environment:
 #author_affil <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
 
-# only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
+# Optional?: only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
 #content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
 
-# sort author affiliation dataframe by pmid variable (?):
+# Optional? sort author affiliation dataframe by pmid variable (?):
 #authors_aff <- authors_aff %>% 
 #  filter(pmid %in% content$pmid)
 
-# duplicate authors may have authored more than one paper, but we only need them once since we're only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
+# duplicate authors may have authored multiple papers, but we only need them once since we're only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
 author_affil_unique <- author_affil %>%
   # select useful columns to keep in the dataframe:
     select(author_name, author_id, author_id2, author_type) %>%
@@ -83,7 +83,7 @@ author_affil_unique <- author_affil_unique %>%
   mutate(type_num = 1:n())
 # if beyond 1, then the org type was different on different rows for the same author (e.g., author_id2 "7005932893" was listed as "academic" and "healthcare" on separate papers) 
 
-# check--create a new dataframe (i.e., multi_type) that pulls the author_id2 of rows where the type_num value is more than 1:
+# check--create a new dataframe (i.e., multi_type) that pulls the author_id2 of rows where the type_num value is more than 1 (that you'll need to assign a main or final type):
 multi_type <- author_affil_unique %>%
   filter(type_num > 1) %>%
   select(author_id2) 
@@ -93,7 +93,8 @@ multi_type <- author_affil_unique %>%
   filter(author_id2 %in% multi_type$author_id2) %>%
   arrange(author_id2)
 
-# create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed "type") for multiple org types per author:
+# create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed "type") for multiple org types per author
+ #(long format had extra/duplicate rows for each type per author; wide format creates one row per author with multiple types as columns) :
 author_affil_wide <- author_affil_unique %>%
   pivot_wider(names_from = type_num, values_from = c(author_type), names_prefix = "type")
 
@@ -206,9 +207,9 @@ pubs <- pubs  %>%
   select(!c(year_month_date, year_month))
 
 # output (or export) the pubs dataframe you created to a *.csv file:
-write_csv(pubs,"2021.09.23 Publications_with_date_variables.csv")
+write_csv(pubs, "2021.09.23 Publications_with_date_variables.csv")
 ```
-## 4. Optional: Create Publication Attribute Data
+## 4. Create Publication Attribute Data
 
 ```{r}
 # Goal: to clean raw content analysis data and merge with recoded Publication *.csv file (see #2.) 
@@ -243,12 +244,12 @@ table(content_recode$type_of_analysis)
 # create a new variable that recodes the dichotomous/check-all column options into a single categorical variable (i.e., UP_urban_rural).
 # then create additional dichotomous variables (i.e., target_pop_urban, target_pop_rural), based on the created urban_rural variable so that "Both" counts as "target_pop_urban" and as "target_pop_rural":
 content_recode <- content_recode %>% 
-  rename(Rurala = Rural...21) %>%
+  rename(Rural = Rural...29) %>%
   mutate(UP_urban_rural = case_when( 
-                                  (Rurala == 1 & Urban==1) ~ "Both",
-                                  (Rurala == 0 & Urban==1) ~ "Urban",
-                                  (Rurala == 1 & Urban==0) ~ "Rural",
-                                  (Rurala == 0 & Urban==0) ~ as.character(NA)),
+                                  (Rural == 1 & Urban==1) ~ "Both",
+                                  (Rural == 0 & Urban==1) ~ "Urban",
+                                  (Rural == 1 & Urban==0) ~ "Rural",
+                                  (Rural == 0 & Urban==0) ~ as.character(NA)),
          target_pop_urban = case_when(
            UP_urban_rural %in% c("Both","Urban") ~ 1,
            TRUE ~ 0),
@@ -258,12 +259,12 @@ content_recode <- content_recode %>%
 
 # check--summarizes cross-tab counts of new categorical variable to previous dichotomous variables:
 table(content_recode$UP_urban_rural, 
-      content_recode$Urban, content_recode$Rurala)
+      content_recode$Urban, content_recode$Rural)
 
 table(content_recode$Urban, 
       content_recode$target_pop_urban)
 
-table(content_recode$Rurala,
+table(content_recode$Rural,
       content_recode$target_pop_rural)
 
 ################################################################################
@@ -369,7 +370,6 @@ content_recode <- content_recode %>%
     target_race_binary = case_when(
       UP_race == "no_race_target" ~ 0,
       TRUE ~ 1)) %>%
-  
 # rename the dichotomous/check-all columns:
   rename(target_pop_Black = `Black or African American`,
          target_pop_Latinx = `Hispanic or Latino`,
@@ -429,17 +429,16 @@ site_recode <- content_recode %>%
 which_site <- function(x, y){names(which(x==y))[1]}
 
 #here we locate which column (e.g., community health center, school, etc.)
-#there is a value of 1 and grab the column's name for the new categorical variable, study_site_recode (?) 
+#there is a value of 1 and grab the column's name for the new categorical variable, study_site 
 
 site_recode <- site_recode  %>%
   mutate(study_site = apply(site_recode, 1, which_site, y = 1))
 
 # note that a few publications had multiple sites
 # "community_health_center" "other": coded as community_health_center
-#"hospital"      "care_facility": coded as hospital
+# "hospital"      "care_facility": coded as hospital
 
-# putting recoded version of study site back onto data frame of interest
-
+# add the categorical study_site variable to the content_recode dataframe:
 content_recode <- content_recode %>% 
   mutate(study_site = site_recode$study_site)
 
@@ -452,9 +451,7 @@ table(content_recode$study_site,
 
 ################################################################################
 
-#Study Design
- 
-#renaming variable names to clean things up:
+# create a new dataframe (i.e., design_recode) that keeps and renames dichotomous/check-all variables:
 design_recode <- content_recode %>%
   select(experimental = `Experimental`,
          quasi_experimental = `Quasi-Experimental` ,
@@ -473,8 +470,7 @@ design_recode <- content_recode %>%
 # create a function (i.e., which_design) to help with recoding... (?):
 which_design <-function(x, y){paste(names(which(x==y)), collapse = ".")}
 
-#take each study design, note if used it and paste it with other
-#study design types, as studies can have multiple study designs.
+# here, we take each study design, note if the pub used it and paste it with other study design types, since studies can have multiple study designs (?)
 
 design_recode <- design_recode  %>%
   mutate(study_design = apply(design_recode , 1, which_design, y = 1) ,
@@ -482,7 +478,7 @@ design_recode <- design_recode  %>%
            study_design == "" ~ "no_study_design",
            TRUE ~ study_design))
 
-#put study design recoded variables onto the content_recode data frame
+# bind the whole design_recode dataframe to the content_recode dataframe:
 content_recode <- bind_cols(content_recode, design_recode,
                             .name_repair = "minimal")
 
@@ -492,21 +488,8 @@ table(design_recode$study_design,
 
 ################################################################################
 
-#single variable, combining detailed study design with type of analysis?
-
-#study_design %>% 
-#  mutate(type_of_analysis_detailed = case_when(
-#    TRUE ~ content_recode$type_of_analysis)
-#         )
-
-################################################################################
-
-# Community Engagement
-# now recoding community engagement, one variable if any community engagement
-# and then type of community engagement, detailed 
-# renaming variables and making other binary 0/1
-
-community_engage <- content_recode %>%
+# create a new dataframe (i.e., engage_recode) that keeps and renames dichotomous/check-all variables and dummies comments in "other":
+engage_recode <- content_recode %>%
   select(engage_broadcast_media = `Broadcast media (e.g., press conferences, TV interviews`,
          engage_entertainment = `Entertainment activities (e.g., picnics, raffles` ,
          engage_focus_groups = `Focus groups and/or surveys` ,
@@ -516,55 +499,55 @@ community_engage <- content_recode %>%
          engage_print_media = `Print media (e.g., press releases, newspaper articles`,
          engage_other1 = `Other Community Engagement 1`,
          engage_other2 = `Other Community Engagement 2`) %>%
-  mutate(engage_advisory_board = case_when(engage_other1  %in% 
-                              c("ad-hoc advisory group of community leaders in each SYCT county todevelop a community-informed strategy for distribution of at-home test kits",
+  mutate(engage_advisory_board = case_when(
+           engage_other1 %in% c("ad-hoc advisory group of community leaders in each SYCT county todevelop a community-informed strategy for distribution of at-home test kits",
                                 "Community Advisory Boards") ~ 1, 
-                              TRUE ~ 0),
-    
-    engage_peer_influence= case_when(engage_other1  %in% 
-                              c("Identifying frontline champions",
+                                TRUE ~ 0),
+         engage_peer_influence = case_when(
+           engage_other1 %in% c("Identifying frontline champions",
                                 "Peer influencers",
                                 "Community member referral networks") ~ 1, 
-                              TRUE ~ 0),
-    engage_transportation= case_when(engage_other1  %in% 
-                              c("Street outreach; mobile vans",
+                                 TRUE ~ 0),
+         engage_transportation = case_when(
+           engage_other1 %in% c("Street outreach; mobile vans",
                                 "transportation to vaccination sites;  a network of public health/clinical health service providers to provide vaccinations; widespread vaccinations sites (ex. malls; removal of residential status as a barrier to obtain vaccines; public health worker delivery of vaccines in rural areas") ~ 1, 
-                              TRUE ~ 0),
-    
-    engage_partnerships = case_when(engage_other1  %in% 
-                              c("COVID-19 data collection through the partnership for decision-making",
+                                 TRUE ~ 0),
+         engage_partnerships = case_when(
+           engage_other1 %in% c("COVID-19 data collection through the partnership for decision-making",
                                 "Multi-disciplinary  collaborative  research and partnerships  focused  on  addressing community needs and building a translational science workforce to enhance project implementation and reach; faculty  members  engage  closely  with  local  health  departments,",
                                 "Conducted an Asian-American and Native Hawaiian/Pacific Islander COVID-19 Needs Assessment") ~ 1,
-                              TRUE ~ engage_partnerships),
-    engage_meetings_events = case_when(engage_other1 %in% 
-                              c("Free community-based Latino testing events") ~ 1,
-                              TRUE ~ engage_meetings_events),
-    engage_other1 = case_when(is.na(engage_other1) | 
-                                engage_advisory_board == 1 |
-                                engage_peer_influence == 1 |
-                                engage_partnerships == 1 |
-                                engage_meetings_events == 1 |
-                                engage_transportation == 1 ~ 0,
-                                !is.na(engage_other1) ~ 1),
-    engage_other2 = case_when(is.na(engage_other2) ~ 0,
-                             !is.na(engage_other2) ~ 1))
+                                TRUE ~ engage_partnerships),
+         engage_meetings_events = case_when(
+           engage_other1 %in% c("Free community-based Latino testing events") ~ 1,
+                                TRUE ~ engage_meetings_events),
+         engage_other1 = case_when(
+           is.na(engage_other1) | 
+           engage_advisory_board == 1 |
+           engage_peer_influence == 1 |
+           engage_partnerships == 1 |
+           engage_meetings_events == 1 |
+           engage_transportation == 1 ~ 0,
+           !is.na(engage_other1) ~ 1),
+         engage_other2 = case_when(is.na(engage_other2) ~ 0,
+           !is.na(engage_other2) ~ 1))
  
-community_engage  <- community_engage   %>%
-  mutate(community_engage_number = apply(community_engage[, ], 1, sum),
-         community_engage_binary = 1 * (community_engage_number > 0),
-         community_engage_recode = apply(community_engage  , 1, which_design, y = 1) ,
-         community_engage_recode = case_when(community_engage_recode == "" ~ "no_engagement",
-                                         TRUE ~ community_engage_recode))
+engage_recode <- engage_recode   %>%
+  mutate(engage_number = apply(engage_recode[, ], 1, sum),
+         engage_binary = 1 * (engage_number > 0),
+         cmty_engage = apply(engage_recode, 1, which_design, y = 1),
+         cmty_engage = case_when(
+           cmty_engage == " " ~ "no_engagement",
+           TRUE ~ cmty_engage))
 
-print(community_engage, width=100000, n =15)
+print(engage_recode, width=100000, n =15)
 
-table(community_engage$community_engage_recode)
+table(engage_recode$cmty_recode)
 
-table(community_engage$community_engage_recode, 
-      community_engage$community_engage_binary)
+table(engage_recode$cmty_recode, 
+      engage_recode$engage_binary)
 
-#put study design recoded variables onto the content_recode data frame:
-content_recode <- bind_cols(content_recode, community_engage,
+# bind the whole design_recode dataframe to the content_recode dataframe:
+content_recode <- bind_cols(content_recode, engage_recode,
                             .name_repair = "minimal")
 
 ################################################################################
@@ -725,7 +708,7 @@ vars <- c("pmid",
           "target_pop_Latinx", 
           "target_pop_Indigenous", 
           "target_pop_Asian",
-          "study_site_recode", 
+          "study_site", 
           colnames(design_recode),
           colnames(community_engage), 
           TSBM_vaccine_columns, 
@@ -743,8 +726,9 @@ vars <- c("pmid",
           "Obesity", 
           "Preeclampsia")
 
- content_recode <- content_recode %>% select(all_of(vars))
-
+ content_recode <- content_recode %>% 
+   select(all_of(vars))
+ 
 ################################################################################
 
 # read in (or import) recoded Publication *.csv file:
@@ -801,7 +785,7 @@ pubs <- read_csv("2021.09.23 Publications_with_date_variables.csv") %>%
 
 #select useful columns to keep in the dataframe:
 pubs <- pubs %>% 
-  select(cycle, year_cite, month, day, date_publish, weeks_from_start, months_from_start, pmid)
+  select(proj_num, cycle, year_cite, month, day, date_publish, weeks_from_start, months_from_start, pmid)
 
 # create a new dataframe (i.e., author_pub_edgelist) that uses left_join to map edge attributes from pubs into the edgelist, based on PMIDs as the identifier:
 author_pub_edgelist <- left_join(x = author_affil, y = pubs, by = "pmid")
@@ -839,7 +823,7 @@ write_csv(author_pub_edgelist, "2021.09.23 Author_Pub_Edgelist.csv")
 #pubs <- read_csv("2021.09.23 Publications_with_date_variables.csv")
 
 # only keep pubs that are in the content data set? read in the content analysis data for the publications:
-content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
+#content <- read_excel("2021.09.23 Content_Analysis-CLEAN.xlsx")
 
 # sort pubs dataframe by pmid variable (?):
 pubs <- pubs %>% 
@@ -855,12 +839,16 @@ pmids <- unique(pubs$pmid)
 
 # create a data frame (?) (i.e., list_of_projects) that grabs all projects associated with a pmid 
 list_of_projects <- lapply(pmids, which_proj, dat = pubs, var = "pmid")
-# not sure what to do with missing column: Warning: Unknown or uninitialised column: `proj_num`.
+### not sure what to do with missing column: Warning: Unknown or uninitialised column: `proj_num`.
 
 names(list_of_projects) <- pmids
 
 # save out list of projects for each pmid:
 save(list_of_projects, file = "2021.09.23 Project_Publication_List.Rdata")
+
+# optional checks:
+View(list_of_projects)
+list_of_projects [[1]] #project number for the first PMID?
 ```
 
 ## 7. Create Co-Authorship Network--finally!
@@ -880,6 +868,7 @@ library(igraph)
 
 # read in (or import) recoded Author Attribute *.csv file:
 author_affil_wide <- read_csv("2021.09.23 Author_Attribute_Data.csv")
+col_type = cols(author_id2 = col_character())
 
 # read in (or import) recoded Publication Attribute *.csv file and set pmid to character:
 publication_attributes <- read_csv("2021.09.23 Publication_Attribute_Data.csv")
@@ -897,7 +886,7 @@ author_pub_edgelist <- read_csv("2021.09.23 Author_Pub_Edgelist.csv")
 # first, making a single id and type variable and putting it on publication and
 # author attribute data frames
 
-# publication first: 
+# publication first: copying the PMID as an ID
 
 publication_attributes <- publication_attributes  %>%
   mutate(ids = pmid, type = "publication")
@@ -914,9 +903,9 @@ author_affil_wide <- author_affil_wide  %>%
 
 shared_var_names <- c("ids", "type")
 
-#now created stacked data with authors on top
+#now append/ created stacked data with authors on top without same col
 stacked.df <- bind_rows(author_affil_wide %>% select(all_of(shared_var_names)), 
-                    pubs %>% select(all_of(shared_var_names)) )
+                    publication_attributes %>% select(all_of(shared_var_names)) )
 
 # And now let's move to the author specific attributes, putting in NAs for the publications
 
@@ -935,18 +924,23 @@ temp_author_data <- pubs[1, ]
 temp_author_data[1, ] <- NA
 temp_author_data_NA <- tibble(temp_author_data, .rows = nrow(author_affil_wide))
 
-publication_specific <- bind_rows(temp_author_data_NA %>% select(-shared_var_names),
-                                  pubs %>% select(-shared_var_names))
+#no ids and type for bind_rows
+#publication_specific <- bind_rows(temp_author_data_NA %>% select(-shared_var_names),
+#                                  pubs %>% select(-shared_var_names))
+
+publication_specific <- bind_rows(temp_author_data_NA,
+                                  pubs)
+
 
 #and now putting all together
 
-attributes_authors_publications  <- bind_cols(shared, author_specific,
+attributes_authors_publications  <- bind_cols(stacked.df, author_specific,
                                               publication_specific)
 
 # and let's also add sender/receiver vars in the edgelist for convenience:
 # sender is author (author_id2), and receiver publication (pmid).
 
-author_publication_edgelist <- author_publication_edgelist %>% 
+author_pub_edgelist <- author_pub_edgelist %>% 
   mutate(sender = author_id2, receiver = pmid) %>%
   select(sender, receiver, cycle:author_id, author_id2, pmid)
 
@@ -959,9 +953,11 @@ author_publication_edgelist <- author_publication_edgelist %>%
 # with name set to id
 attributes_authors_publications <- attributes_authors_publications %>%
   mutate(type_binary = 1*(type == "publication"))
+#logical of publication and author to print back 1=true/pub or 0=false/auth in a new col (type_binary)
 
 type <- attributes_authors_publications$type_binary
 names(type) <- attributes_authors_publications$ids
+#named vector of author_ID & PMIDs with true/false ones and zeroes
 
 # now creating network in igraph, with types set to type and edges
 # grabbed from sender/receiver columns, need to transpose and make the 2 column
@@ -971,11 +967,11 @@ names(type) <- attributes_authors_publications$ids
 #author_publication_edgelist <- author_publication_edgelist %>%
 #  filter(sender %in% names(type) & receiver %in% names(type))
 
-edges <- c(t(author_publication_edgelist %>% select(sender, receiver)))
-
+edges <- c(t(author_pub_edgelist %>% select(sender, receiver)))
+#vector of PMIDs
 
 coauthorship_net <- make_bipartite_graph(types = type, edges = edges)
-
+coauthorship_net <- make_bipartite_graph(types = type, edges = test)
 
 #check to make this sure this looks right and grab useful indicator vectors:
 
