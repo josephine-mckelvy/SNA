@@ -50,7 +50,7 @@ write_csv(author_affil, "2021.09.23 Author_Affiliations_no_missing_ids.csv")
 ## 3. Create Author Attribute Data
 
 ```{r}
-# Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and organizational type per author
+# Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and one organizational type per author
 
 # install (for the first time only) and load packages:
 #install.packages("tidyverse")
@@ -164,7 +164,7 @@ write_csv(author_affil_wide, "2021.09.23 Author_Attribute_Data.csv")
 library(lubridate)
 
 # read in (or import) raw Publication *.csv file:
-pubs <- read_csv("2021.09.23 Publications.csv")
+pubs <- read_excel("2021.09.23 Publications.xlsx")
 
 # optional: missing values for the variables year_cite, month, or day will result in cases failing to parse. replace NA in the variable, day, with the value of 1 before creating new variables with day:
 #pubs$day[is.na(pubs$day)] <- 1
@@ -945,7 +945,7 @@ levels <- levels(factor(edge))
 
 # vector of senders (author_id2) and receivers (PMIDs)
 
-coauthorship_net <- make_bipartite_graph(types = type, edges = edge_numeric, directed = FALSE)
+coauthorship_net <- make_bipartite_graph(types = type, edges = edge, directed = FALSE)
 
 # check to make this sure this looks right and grab useful indicator vectors:
 
