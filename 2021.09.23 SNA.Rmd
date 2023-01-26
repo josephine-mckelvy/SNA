@@ -940,9 +940,12 @@ names(type) <- attributes_author_pub$id
 # transpose and make the 2 column matrix (i.e., the sender and receiver columns)into a vector (i.e., edge):
 edge <- c(t(author_pub_edgelist %>% 
               select(sender, receiver)))
+edge_numeric <- as.numeric(factor(edge))
+levels <- levels(factor(edge))
+
 # vector of senders (author_id2) and receivers (PMIDs)
 
-coauthorship_net <- make_bipartite_graph(types = type, edges = edge, directed = FALSE)
+coauthorship_net <- make_bipartite_graph(types = type, edges = edge_numeric, directed = FALSE)
 
 # check to make this sure this looks right and grab useful indicator vectors:
 
