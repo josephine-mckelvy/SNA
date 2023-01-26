@@ -541,9 +541,9 @@ engage_recode <- engage_recode   %>%
 
 print(engage_recode, width=100000, n =15)
 
-table(engage_recode$cmty_recode)
+table(engage_recode$cmty_engage)
 
-table(engage_recode$cmty_recode, 
+table(engage_recode$cmty_engage, 
       engage_recode$engage_binary)
 
 # bind the whole design_recode dataframe to the content_recode dataframe:
@@ -649,8 +649,8 @@ content_recode <- content_recode %>%
        `Testing Policies and Legislation` == 1) ~ 1,
         TRUE ~ 0) )
 
-#now creating extra variables, number of TSBM benefits, pasted together
-#benefits they did and binary indicator if did any benefit
+# now creating extra variables, number of TSBM benefits, pasted together
+# benefits they did and binary indicator if did any benefit
 
 TSBM_testing_columns <- c("TSBM_testing_clinical", 
                           "TSBM_testing_public_health",
@@ -664,7 +664,7 @@ content_recode  <- content_recode   %>%
          TSBM_testing_recode = case_when(TSBM_testing_recode == "" ~ "no_TSBM_vaccines",
                                           TRUE ~ TSBM_testing_recode))
 
-#quick check:
+# quick check:
 print(content_recode[, c(TSBM_testing_columns, 
                          "TSBM_testing_binary", 
                          "TSBM_testing_recode", 
@@ -677,8 +677,7 @@ table(content_recode$TSBM_testing_binary,
 table(content_recode$TSBM_testing_binary, 
       content_recode$TSBM_testing_recode)
 
-#rename some health variables
-
+# rename some health variables:
 content_recode <- content_recode %>% 
   rename(Neurological = `Neurological disorders (includes Guillain-Barre syndrome)`,
          HIV = `HIV/AIDS`,
@@ -710,7 +709,7 @@ vars <- c("pmid",
           "target_pop_Asian",
           "study_site", 
           colnames(design_recode),
-          colnames(community_engage), 
+          colnames(engage_recode), 
           TSBM_vaccine_columns, 
           "TSBM_vaccines_binary", 
           "TSBM_vaccines_recode", 
@@ -745,17 +744,17 @@ pubs <- pubs %>%
 
 # merge content analysis data onto publication data and export
 
-publication_attributes <- left_join(x = content_recode, y = pubs, by = "pmid")
+pub_attributes <- left_join(x = content_recode, y = pubs, by = "pmid")
 
 #only keep publication if on pub-author edgelist?
 temp_edges <- read_csv("2021.09.23 Author_Affiliations_no_missing_ids.csv")
 
 # sort pub dataframe by pmid variable (?):
-publication_attributes <- publication_attributes  %>%
+pub_attributes <- pub_attributes  %>%
   filter(pmid %in% temp_edges$pmid)
 
 # output (or export) the publication_attributes dataframe you created to a *.csv file:
-write_csv(publication_attributes, "2021.09.23 Publication_Attribute_Data.csv")
+write_csv(pub_attributes, "2021.09.23 Publication_Attribute_Data.csv")
 ```
 ## 5. Create Author-Publication Edgelist
 
@@ -834,10 +833,10 @@ which_proj <- function(dat, var, id){
     dat$proj_num[dat[, var] == id]
   }
 
-# define unique set of pmids
+# define unique set of pmids:
 pmids <- unique(pubs$pmid)
 
-# create a data frame (?) (i.e., list_of_projects) that grabs all projects associated with a pmid 
+# create a data frame (?) (i.e., list_of_projects) that grabs all projects associated with a pmid: 
 list_of_projects <- lapply(pmids, which_proj, dat = pubs, var = "pmid")
 ### not sure what to do with missing column: Warning: Unknown or uninitialised column: `proj_num`.
 
@@ -845,10 +844,6 @@ names(list_of_projects) <- pmids
 
 # save out list of projects for each pmid:
 save(list_of_projects, file = "2021.09.23 Project_Publication_List.Rdata")
-
-# optional checks:
-View(list_of_projects)
-list_of_projects [[1]] #project number for the first PMID?
 ```
 
 ## 7. Create Co-Authorship Network--finally!
@@ -868,112 +863,88 @@ library(igraph)
 
 # read in (or import) recoded Author Attribute *.csv file:
 author_affil_wide <- read_csv("2021.09.23 Author_Attribute_Data.csv")
-col_type = cols(author_id2 = col_character())
+                     col_type = cols(author_id2 = col_character())
 
 # read in (or import) recoded Publication Attribute *.csv file and set pmid to character:
-publication_attributes <- read_csv("2021.09.23 Publication_Attribute_Data.csv")
-                                   col_type = cols(pmid = col_character())
+pub_attributes <- read_csv("2021.09.23 Publication_Attribute_Data.csv")
+                  col_type = cols(pmid = col_character())
 
 #read in (or import) recoded Edgelist *.csv files and set pmid to character:
 author_pub_edgelist <- read_csv("2021.09.23 Author_Pub_Edgelist.csv")
-                                   col_type = cols(pmid = col_character()) 
+                       col_type = cols(pmid = col_character()) 
 
-#######
-# First a bit of compiling of input data before constructing the networks
+################################################################################
+                       
+# create a combined data set of publication and author attributes 
+# with shared identifier variables (i.e., id, node) in both dataframes
 
-# Putting together a combined data set of publication and author attributes
+# publications: copy the PMID as the IDs:
+pub_attributes <- pub_attributes  %>%
+  mutate(id = pmid, node = "publication")
 
-# first, making a single id and type variable and putting it on publication and
-# author attribute data frames
-
-# publication first: copying the PMID as an ID
-
-publication_attributes <- publication_attributes  %>%
-  mutate(ids = pmid, type = "publication")
-
-# and now author
-
+# authors: copy the author_id2 as the IDs:
 author_affil_wide <- author_affil_wide  %>%
-  mutate(ids = author_id2, type = "author")
+  mutate(id = author_id2, node = "author")
 
-# and now we create a shared data.frame, where stacking author attributes on top of
-# publication attributes into a single data.frame
+# define the attributes that are shared across the two dataframes (i.e., ids, type):
+shared_identifiers <- c("id", "node")
 
-# first we define which attributes are shared across the two data.frames
+# append or create a single, shared dataframe, stacking author attributes on top of publication attributes
+stacked.df <- bind_rows(author_affil_wide %>% select(all_of(shared_identifiers)), 
+                    pub_attributes %>% select(all_of(shared_identifiers)) )
 
-shared_var_names <- c("ids", "type")
-
-#now append/ created stacked data with authors on top without same col
-stacked.df <- bind_rows(author_affil_wide %>% select(all_of(shared_var_names)), 
-                    publication_attributes %>% select(all_of(shared_var_names)) )
-
-# And now let's move to the author specific attributes, putting in NAs for the publications
-
+# create a temporary dataframe with author-specific attributes: put NAs for the publications:
 temp_pub_data <- author_affil_wide[1, ]
 temp_pub_data[1, ] <- NA
-temp_pub_data_NA <- tibble(temp_pub_data, .rows = nrow(publication_attributes))
+temp_pub_data_NA <- tibble(temp_pub_data, .rows = nrow(pub_attributes))
 
-# put together author and publication data for author specific attributes,
-# excluding the shared ones
+# append author and publication data for author-specific attributes,
+# excluding the shared attributes:
+author_specific <- bind_rows(author_affil_wide %>% select(-shared_identifiers), 
+                             temp_pub_data_NA %>%select(-shared_identifiers))
 
-author_specific <- bind_rows(author_affil_wide %>% select(-shared_var_names), 
-                             temp_pub_data_NA %>%select(-shared_var_names))
-
-# and now the reverse, doing publication specific attributes
-temp_author_data <- pubs[1, ]
+# publication-specific attributes: put NAs for the authors:
+temp_author_data <- pub_attributes[1, ]
 temp_author_data[1, ] <- NA
 temp_author_data_NA <- tibble(temp_author_data, .rows = nrow(author_affil_wide))
 
-#no ids and type for bind_rows
-#publication_specific <- bind_rows(temp_author_data_NA %>% select(-shared_var_names),
-#                                  pubs %>% select(-shared_var_names))
+pub_specific <- bind_rows(temp_author_data_NA %>% select(-shared_identifiers),
+                                  pub_attributes %>% select(-shared_identifiers))
 
-publication_specific <- bind_rows(temp_author_data_NA,
-                                  pubs)
+# append stacked dataframe, author specific dataframe, and publication-specific dataframe:
+attributes_author_pub  <- bind_cols(stacked.df, author_specific, pub_specific)
 
-
-#and now putting all together
-
-attributes_authors_publications  <- bind_cols(stacked.df, author_specific,
-                                              publication_specific)
-
-# and let's also add sender/receiver vars in the edgelist for convenience:
-# sender is author (author_id2), and receiver publication (pmid).
-
+# add sender/receiver variables in the edgelist
+# sender is author (author_id2), and receiver is publication (pmid):
 author_pub_edgelist <- author_pub_edgelist %>% 
   mutate(sender = author_id2, receiver = pmid) %>%
   select(sender, receiver, cycle:author_id, author_id2, pmid)
 
-# Constructing the Network
-# Here we take the edgelist, two attribute files and construct the igraph object
-# useful for plotting and summary statistics.
+############################
+# Constructing the Network #
+############################
 
+# Construct the igraph object, using the edgelist and two attribute files 
 
-# Let's create a 'named' type vector, showing if node is author or publication
-# with name set to id
-attributes_authors_publications <- attributes_authors_publications %>%
-  mutate(type_binary = 1*(type == "publication"))
-#logical of publication and author to print back 1=true/pub or 0=false/auth in a new col (type_binary)
+# create a 'named' vector (i.e., type), showing if the node is an author (0) or publication (1) (i.e., type_binary),
+# with the name of each element set to author_ids/PMIDs 
+# will print an addition 0 if author or 1 if publication
+attributes_author_pub <- attributes_author_pub %>%
+  mutate(type_binary = 1*(node == "publication"))
 
-type <- attributes_authors_publications$type_binary
-names(type) <- attributes_authors_publications$ids
-#named vector of author_ID & PMIDs with true/false ones and zeroes
+type <- attributes_author_pub$type_binary
+names(type) <- attributes_author_pub$id
 
-# now creating network in igraph, with types set to type and edges
-# grabbed from sender/receiver columns, need to transpose and make the 2 column
-# matrix a vector to get in format for igraph: 
+# now creating network in igraph, with types set to type and 
+# edges grabbed from sender/receiver columns, 
+# transpose and make the 2 column matrix (i.e., the sender and receiver columns)into a vector (i.e., edge):
+edge <- c(t(author_pub_edgelist %>% 
+              select(sender, receiver)))
+# vector of senders (author_id2) and receivers (PMIDs)
 
-# take out any edges that are not in attribute file?
-#author_publication_edgelist <- author_publication_edgelist %>%
-#  filter(sender %in% names(type) & receiver %in% names(type))
+coauthorship_net <- make_bipartite_graph(types = type, edges = edge, directed = FALSE)
 
-edges <- c(t(author_pub_edgelist %>% select(sender, receiver)))
-#vector of PMIDs
-
-coauthorship_net <- make_bipartite_graph(types = type, edges = edges)
-coauthorship_net <- make_bipartite_graph(types = type, edges = test)
-
-#check to make this sure this looks right and grab useful indicator vectors:
+# check to make this sure this looks right and grab useful indicator vectors:
 
 type_from_igraph <- V(coauthorship_net)$type
 table(type_from_igraph)
@@ -985,7 +956,6 @@ is_author_type <- type_from_igraph == FALSE
 is_publication_type <- type_from_igraph == TRUE
 
 # Putting attributes onto object:
-
 coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
                                    name = "org_final", 
                                    value = attributes_authors_publications$org_final)
