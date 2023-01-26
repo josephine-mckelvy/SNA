@@ -389,101 +389,30 @@ library(tidyverse)</code></pre>
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(readxl)
 
-# read in (or import) raw affiliation excel file:
-authors_aff &lt;- read_excel(&quot;2021.09.23 Author_Affiliations.xlsx&quot;)
+# read in (or import) raw Author Affiliation Excel file:
+author_affil &lt;- read_excel(&quot;2021.09.23 Author_Affiliations.xlsx&quot;)
 
-# create new variable (i.e., author_id2) where, if author_id is missing, enter the author&#39;s name for author_id; else print the existing author_id:
-authors_aff &lt;- authors_aff %&gt;%
-  mutate(author_id2 = case_when(is.na(author_id) ~ author_name , 
+# create new variable (i.e., author_id2) (in a new dataframe, author-affil) where, if author_id is missing, enter the author&#39;s name for author_id; else print the existing author_id:
+author_affil &lt;- author_affil %&gt;%
+  mutate(author_id2 = case_when(is.na(author_id) ~ author_name, 
                                 TRUE ~ author_id))
-# check:
-authors_aff %&gt;%
+# check--are there any missing author_id or author_id2?:
+author_affil %&gt;%
   filter(is.na(author_id)) %&gt;%
   select(author_id, author_id2)</code></pre>
 <pre><code>## # A tibble: 0 × 2
 ## # … with 2 variables: author_id &lt;chr&gt;, author_id2 &lt;chr&gt;</code></pre>
-<pre class="r"><code>authors_aff %&gt;%
+<pre class="r"><code>author_affil %&gt;%
   filter(is.na(author_id2)) %&gt;%
   select(author_id, author_id2)</code></pre>
 <pre><code>## # A tibble: 0 × 2
 ## # … with 2 variables: author_id &lt;chr&gt;, author_id2 &lt;chr&gt;</code></pre>
-<pre class="r"><code># output (or export) the authors_aff dataframe you created to a *.csv file:
-write_csv(authors_aff,&quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)</code></pre>
-</div>
-<div id="output-publication-data---with-dates" class="section level2">
-<h2>2. Output Publication Data - With Dates</h2>
-<pre class="r"><code># Goal: to add variables concerning date of publication and output back to the same dataset
-
-# install (for the first time only) and load packages:
-#install.packages(&quot;tidyverse&quot;)
-#install.packages(&quot;readxl&quot;)
-#install.packages(&quot;lubricate&quot;)
-
-#library(tidyverse)
-#library(readxl)
-library(lubridate)</code></pre>
-<pre><code>## Loading required package: timechange</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     date, intersect, setdiff, union</code></pre>
-<pre class="r"><code># read in (or import) raw publication *.csv file:
-pubs &lt;- read_csv(&quot;2021.09.23 Publications.csv&quot;)</code></pre>
-<pre><code>## Rows: 25 Columns: 41</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (31): date_id, date_update, method, pi_accept, acknow_nih, acknow_radx, ...
-## dbl  (8): proj_num, cycle, year_cite, day, volume, issue, cite_count, pmid
-## lgl  (2): fund5, fund6
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code># optional: missing values for the variables year_cite, month, or day will result in cases failing to parse. replace NA in the variable, day, with the value of 1 before creating new variables with day:
-#pubs$day[is.na(pubs$day)] &lt;- 1
-
-# create new variables (i.e., year_month_date, year_month, date_publish) that strings existing variables (i.e., year_cite, month, day) in YMD format, separated by single spaces:
-pubs &lt;- pubs %&gt;% 
-  mutate(year_month_date = paste(year_cite, month, day, sep= &#39; &#39;),
-         year_month = paste(year_cite, month, sep= &#39; &#39;),
-  # if day is NA, use the new year_month_day variable into YMD format:
-         date_publish = case_when(!is.na(day) ~ ymd(year_month_date),
-  # if day and month are NA, use the new year_month variable into YM format:
-                                  is.na(day) &amp; !is.na(month) ~ ym(year_month)) )</code></pre>
-<pre><code>## Warning: 13 failed to parse.</code></pre>
-<pre class="r"><code># create a new variable (i.e, weeks_from_start) that computes the age of RADx-UP at the time of each publication. this will be useful for summary statistics, plots, etc. at different cut points (or scales) of time.
-
-# define &#39;start_date&#39; of RADx-UP, roughly September 2020:
-start_date &lt;- &quot;2020-08-27&quot;
-
-# calculate weeks from start_date:
-pubs &lt;- pubs %&gt;%
-  mutate(weeks_from_start = 
-           as.numeric(difftime(date_publish, start_date, units = &quot;weeks&quot;)))
-
-# create a function (i.e., month_function) since months have varying lengths:
-month_function &lt;- function(start_date, end_date) {
-  result &lt;-NA
-  if (!is.na(end_date)){
-    result &lt;-  length(seq.Date(as.Date(start_date), end_date, by = &quot;month&quot;))}
-  result
-}
-
-# apply month_function to the dataframe (i.e., pubs):
-pubs &lt;- pubs %&gt;%
-  mutate(months_from_start = 
-           as.numeric(lapply(date_publish, month_function, start_date=start_date)))
-
-# select columns to keep in the dataframe (i.e., everything but the YMD and YM format variables used to compute other variables):
-pubs &lt;- pubs  %&gt;% 
-  select(!c(year_month_date, year_month))
-
-# output (or export) the pubs dataframe you created to a *.csv file:
-write_csv(pubs,&quot;2021.09.23 Publications_with_date_variables.csv&quot;)</code></pre>
+<pre class="r"><code># output (or export) the author_affil dataframe you created to a *.csv file:
+write_csv(author_affil, &quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)</code></pre>
 </div>
 <div id="create-author-attribute-data" class="section level2">
 <h2>3. Create Author Attribute Data</h2>
-<pre class="r"><code># Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and organizational type per author
+<pre class="r"><code># Goal: to reduce the recoded Author Affiliations *.csv file (see #1.) to just author name, author ID, and one organizational type per author
 
 # install (for the first time only) and load packages:
 #install.packages(&quot;tidyverse&quot;)
@@ -492,58 +421,52 @@ write_csv(pubs,&quot;2021.09.23 Publications_with_date_variables.csv&quot;)</cod
 #library(tidyverse)
 #library(readxl)
 
-# read in (or import) recoded affiliation *.csv file:
-authors_aff &lt;- read_csv(&quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)</code></pre>
-<pre><code>## Rows: 209 Columns: 6
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (3): author_name, author_aff, author_type
-## dbl (3): pmid, author_id, author_id2
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code># read in the content analysis data for the publications (not sure why):
+# read in (or import) recoded Author Affiliation *.csv file (if not already in the environment:
+#author_affil &lt;- read_csv(&quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)
+
+# Optional?: only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
 #content &lt;- read_excel(&quot;2021.09.23 Content_Analysis-CLEAN.xlsx&quot;)
 
-# sort content dataframe by pmid variable (?):
+# Optional? sort author affiliation dataframe by pmid variable (?):
 #authors_aff &lt;- authors_aff %&gt;% 
 #  filter(pmid %in% content$pmid)
 
-# duplicate authors may have authored more than one paper, but we only need them once since we&#39;re only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
-authors_aff_unique &lt;- authors_aff %&gt;%
-# select columns to keep in the dataframe:
+# duplicate authors may have authored multiple papers, but we only need them once since we&#39;re only interested in the attributes of the author. create a new data set (i.e., authors_aff_unique) that is one row per author_id for cases with a single organizational type (org):
+author_affil_unique &lt;- author_affil %&gt;%
+  # select useful columns to keep in the dataframe:
     select(author_name, author_id, author_id2, author_type) %&gt;%
-# if the following variables are distinct, then keep the values (?):
+  # if the following variables are distinct, then keep the values (?):
     distinct(author_id, author_id2, author_type, .keep_all = TRUE)
 
-authors_aff_unique &lt;- authors_aff_unique %&gt;% 
+author_affil_unique &lt;- author_affil_unique %&gt;% 
 # sort by the variable, author_id2:
   group_by(author_id2) %&gt;% 
-# create a variable (i.e., type_num) that numbers how many times author_id2 is in the dataframe with a distinct org type:
+# create a variable (i.e., type_num) that numbers how many times author_id2 is in the dataframe with a unique org type:
   mutate(type_num = 1:n())
 # if beyond 1, then the org type was different on different rows for the same author (e.g., author_id2 &quot;7005932893&quot; was listed as &quot;academic&quot; and &quot;healthcare&quot; on separate papers) 
 
-# check--create a new dataframe (i.e., multiple_ids) that pulls the author_id2 of rows where the type_num value is more than 1:
-multiple_ids &lt;- authors_aff_unique %&gt;%
+# check--create a new dataframe (i.e., multi_type) that pulls the author_id2 of rows where the type_num value is more than 1 (that you&#39;ll need to assign a main or final type):
+multi_type &lt;- author_affil_unique %&gt;%
   filter(type_num &gt; 1) %&gt;%
   select(author_id2) 
 
 # sort the author_id2 in this dataframe (?):
- authors_aff_unique %&gt;%
-  filter(author_id2 %in% multiple_ids$author_id2) %&gt;%
+ author_affil_unique %&gt;%
+  filter(author_id2 %in% multi_type$author_id2) %&gt;%
   arrange(author_id2)</code></pre>
 <pre><code>## # A tibble: 2 × 5
 ## # Groups:   author_id2 [1]
-##   author_name  author_id author_id2 author_type type_num
-##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;          &lt;int&gt;
+##   author_name author_id  author_id2 author_type type_num
+##   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;          &lt;int&gt;
 ## 1 Klonoff DC  7005932893 7005932893 Academic           1
 ## 2 Klonoff DC  7005932893 7005932893 Healthcare         2</code></pre>
-<pre class="r"><code># create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed &quot;type&quot;) for multiple org types per author:
-authors_aff_wide &lt;- authors_aff_unique %&gt;%
+<pre class="r"><code># create a new dataframe (i.e., authors_aff_wide) that pivots data to wide format, with a new column (prefixed &quot;type&quot;) for multiple org types per author
+ #(long format had extra/duplicate rows for each type per author; wide format creates one row per author with multiple types as columns) :
+author_affil_wide &lt;- author_affil_unique %&gt;%
   pivot_wider(names_from = type_num, values_from = c(author_type), names_prefix = &quot;type&quot;)
 
 # factor the type1 &amp; type2 variables in this hierarchy (i.e., community = level 1, school = level 2, etc.): 
-authors_aff_wide &lt;-authors_aff_wide %&gt;%
+author_affil_wide &lt;-author_affil_wide %&gt;%
   mutate(type1_factor = factor(type1, levels=c(&quot;Community&quot;, 
                                                &quot;School&quot;,
                                                &quot;Government&quot;,
@@ -558,10 +481,10 @@ authors_aff_wide &lt;-authors_aff_wide %&gt;%
                                                &quot;Academic&quot;)))
 # thus we would prioritize &quot;healthcare&quot; over &quot;academic&quot; for author &quot;7005932893&quot;
 
-# create a new variable (i.e., org_final) that assigns a main org type for authors with multiple affiliations, 
+# create a new variable (i.e., final_type) that assigns a main org type for authors with multiple affiliations, 
 # based on the following pre-determined rules:
-authors_aff_wide &lt;- authors_aff_wide %&gt;%
-  mutate(org_final = case_when( 
+author_affil_wide &lt;- author_affil_wide %&gt;%
+  mutate(final_type = case_when( 
    # if only type1 value exists, then assign the value of type1:
                           is.na(type2) ~ type1,
    # if type1 value is missing but type2 exists, then assign the value of type2: 
@@ -572,11 +495,12 @@ authors_aff_wide &lt;- authors_aff_wide %&gt;%
                           as.numeric(type2_factor) &lt; as.numeric(type1_factor)  
                           &amp; (!is.na(type1) &amp; !is.na(type2)) ~ type2,
                           TRUE ~ type1)) %&gt;%
-#select columns to keep in the dataframe (i.e., everything but the factor variables used to compute other variables):
+   #select useful columns to keep in the dataframe (i.e., everything but the factor variables used to compute other variables):
     select(!c(&quot;type1_factor&quot;, &quot;type2_factor&quot;))
 
 # check--summarize cross-tab counts of each org type (not sure what to look for in the cross-check):
-table(authors_aff_wide$org_final, authors_aff_wide$type1,
+table(author_affil_wide$final_type, 
+      author_affil_wide$type1,
       useNA=&quot;always&quot;)</code></pre>
 <pre><code>##               
 ##                Academic Community Government Healthcare Professional School
@@ -596,7 +520,8 @@ table(authors_aff_wide$org_final, authors_aff_wide$type1,
 ##   Professional    0
 ##   School          0
 ##   &lt;NA&gt;            0</code></pre>
-<pre class="r"><code>table(authors_aff_wide$org_final, authors_aff_wide$type2,
+<pre class="r"><code>table(author_affil_wide$final_type, 
+      author_affil_wide$type2,
       useNA=&quot;always&quot;)</code></pre>
 <pre><code>##               
 ##                Healthcare &lt;NA&gt;
@@ -607,7 +532,9 @@ table(authors_aff_wide$org_final, authors_aff_wide$type1,
 ##   Professional          0   12
 ##   School                0    1
 ##   &lt;NA&gt;                  0    0</code></pre>
-<pre class="r"><code>table(authors_aff_wide$org_final, authors_aff_wide$type1, authors_aff_wide$type2,
+<pre class="r"><code>table(author_affil_wide$final_type, 
+      author_affil_wide$type1, 
+      author_affil_wide$type2,
       useNA=&quot;always&quot;)</code></pre>
 <pre><code>## , ,  = Healthcare
 ## 
@@ -651,30 +578,86 @@ table(authors_aff_wide$org_final, authors_aff_wide$type1,
 ##   School          0
 ##   &lt;NA&gt;            0</code></pre>
 <pre class="r"><code># output (or export) the authors_aff_wide dataframe you created to a *.csv file:
-write_csv(authors_aff_wide, &quot;2021.09.23 Author_Attribute_Data.csv&quot;)
-
-# author_id is id of author, with some NAs
-# author_id2 is id of author with no NAs (name put in where NA in author_id)
-# author is name of author
-# org1 is first org type (most authors only have 1)
-# org2 is second org type (if relevant)
-# org_final is combined, single org type for author based on filling
-# missing data where exists and hierarchy of org types (see above)</code></pre>
+write_csv(author_affil_wide, &quot;2021.09.23 Author_Attribute_Data.csv&quot;)</code></pre>
 </div>
-<div id="create-publication-attribute-data" class="section level2">
-<h2>4. Create Publication Attribute Data</h2>
-<pre class="r"><code># Goal: to clean raw content analysis data and merge with recoded publication *.csv file (see #2.) 
+<div id="output-publication-data---with-dates" class="section level2">
+<h2>2. Output Publication Data - With Dates</h2>
+<pre class="r"><code># Goal: to add variables concerning date of publication and output back to the same dataset
 
 # install (for the first time only) and load packages:
 #install.packages(&quot;tidyverse&quot;)
 #install.packages(&quot;readxl&quot;)
-#install.packages(&quot;lubricate&quot;)
+#install.packages(&quot;lubridate&quot;)
+
+#library(tidyverse)
+#library(readxl)
+library(lubridate)</code></pre>
+<pre><code>## Loading required package: timechange</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code># read in (or import) raw Publication *.csv file:
+pubs &lt;- read_excel(&quot;2021.09.23 Publications.xlsx&quot;)
+
+# optional: missing values for the variables year_cite, month, or day will result in cases failing to parse. replace NA in the variable, day, with the value of 1 before creating new variables with day:
+#pubs$day[is.na(pubs$day)] &lt;- 1
+
+# create new variables (i.e., year_month_date, year_month, date_publish) that strings existing variables (i.e., year_cite, month, day) in YMD format, separated by single spaces:
+pubs &lt;- pubs %&gt;% 
+  mutate(year_month_date = paste(year_cite, month, day, sep= &#39; &#39;),
+         year_month = paste(year_cite, month, sep= &#39; &#39;),
+  # if day is NA, use the new year_month_day variable into YMD format:
+         date_publish = case_when(!is.na(day) ~ ymd(year_month_date),
+  # if day and month are NA, use the new year_month variable into YM format:
+                                  is.na(day) &amp; !is.na(month) ~ ym(year_month)) )</code></pre>
+<pre><code>## Warning: 13 failed to parse.</code></pre>
+<pre class="r"><code># create a new variable (i.e, weeks_from_start) that computes the age of RADx-UP at the time of each publication. this will be useful for summary statistics, plots, etc. at different cut points (or scales) of time.
+
+# define &#39;start_date&#39; of RADx-UP, roughly September 2020:
+start_date &lt;- &quot;2020-08-27&quot;
+
+# calculate weeks from start_date:
+pubs &lt;- pubs %&gt;%
+  mutate(weeks_from_start = 
+           as.numeric(difftime(date_publish, start_date, units = &quot;weeks&quot;)))
+
+# create a function (i.e., month_function) to define how long a &quot;month&quot; is (?):
+month_function &lt;- function(start_date, end_date) {
+  result &lt;- NA
+  if (!is.na(end_date)){
+    result &lt;- length(seq.Date(as.Date(start_date), end_date, by = &quot;month&quot;))}
+  result
+}
+
+# apply month_function to the dataframe (i.e., pubs) to create a new variable (i.e., months_from_start) for how many months old the pubs are:
+pubs &lt;- pubs %&gt;%
+  mutate(months_from_start = 
+           as.numeric(lapply(date_publish, month_function, start_date=start_date)))
+
+# select useful columns to keep in the dataframe 
+# (i.e., everything but the YMD and YM format variables used to compute other variables):
+pubs &lt;- pubs  %&gt;% 
+  select(!c(year_month_date, year_month))
+
+# output (or export) the pubs dataframe you created to a *.csv file:
+write_csv(pubs, &quot;2021.09.23 Publications_with_date_variables.csv&quot;)</code></pre>
+</div>
+<div id="create-publication-attribute-data" class="section level2">
+<h2>4. Create Publication Attribute Data</h2>
+<pre class="r"><code># Goal: to clean raw content analysis data and merge with recoded Publication *.csv file (see #2.) 
+
+# install (for the first time only) and load packages:
+#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;readxl&quot;)
+#install.packages(&quot;lubridate&quot;)
 
 #library(tidyverse)
 #library(readxl)
 #library(lubridate)
 
-# read in the content analysis data for the publications:
+# read in raw content analysis Excel file for the publications:
 content &lt;- read_excel(&quot;2021.09.23 Content_Analysis-CLEAN.xlsx&quot;)</code></pre>
 <pre><code>## New names:
 ## • `Rural` -&gt; `Rural...21`
@@ -699,12 +682,12 @@ table(content_recode$type_of_analysis)</code></pre>
 # create a new variable that recodes the dichotomous/check-all column options into a single categorical variable (i.e., UP_urban_rural).
 # then create additional dichotomous variables (i.e., target_pop_urban, target_pop_rural), based on the created urban_rural variable so that &quot;Both&quot; counts as &quot;target_pop_urban&quot; and as &quot;target_pop_rural&quot;:
 content_recode &lt;- content_recode %&gt;% 
-  rename(Rurala = Rural...21) %&gt;%
+  rename(Rural = Rural...29) %&gt;%
   mutate(UP_urban_rural = case_when( 
-                                  (Rurala == 1 &amp; Urban==1) ~ &quot;Both&quot;,
-                                  (Rurala == 0 &amp; Urban==1) ~ &quot;Urban&quot;,
-                                  (Rurala == 1 &amp; Urban==0) ~ &quot;Rural&quot;,
-                                  (Rurala == 0 &amp; Urban==0) ~ as.character(NA)),
+                                  (Rural == 1 &amp; Urban==1) ~ &quot;Both&quot;,
+                                  (Rural == 0 &amp; Urban==1) ~ &quot;Urban&quot;,
+                                  (Rural == 1 &amp; Urban==0) ~ &quot;Rural&quot;,
+                                  (Rural == 0 &amp; Urban==0) ~ as.character(NA)),
          target_pop_urban = case_when(
            UP_urban_rural %in% c(&quot;Both&quot;,&quot;Urban&quot;) ~ 1,
            TRUE ~ 0),
@@ -714,12 +697,13 @@ content_recode &lt;- content_recode %&gt;%
 
 # check--summarizes cross-tab counts of new categorical variable to previous dichotomous variables:
 table(content_recode$UP_urban_rural, 
-      content_recode$Urban, content_recode$Rurala)</code></pre>
+      content_recode$Urban, content_recode$Rural)</code></pre>
 <pre><code>## , ,  = 0
 ## 
 ##        
 ##         0 1
 ##   Both  0 0
+##   Rural 0 0
 ##   Urban 0 3
 ## 
 ## , ,  = 1
@@ -727,6 +711,7 @@ table(content_recode$UP_urban_rural,
 ##        
 ##         0 1
 ##   Both  0 1
+##   Rural 2 0
 ##   Urban 0 0</code></pre>
 <pre class="r"><code>table(content_recode$Urban, 
       content_recode$target_pop_urban)</code></pre>
@@ -734,12 +719,12 @@ table(content_recode$UP_urban_rural,
 ##      0  1
 ##   0 21  0
 ##   1  0  4</code></pre>
-<pre class="r"><code>table(content_recode$Rurala,
+<pre class="r"><code>table(content_recode$Rural,
       content_recode$target_pop_rural)</code></pre>
 <pre><code>##    
 ##      0  1
-##   0 24  0
-##   1  0  1</code></pre>
+##   0 22  0
+##   1  0  3</code></pre>
 <pre class="r"><code>################################################################################
 
 # create a new variable that recodes the dichotomous/check-all column options into a single categorical variable (i.e., UP_age):
@@ -860,7 +845,6 @@ content_recode &lt;- content_recode %&gt;%
     target_race_binary = case_when(
       UP_race == &quot;no_race_target&quot; ~ 0,
       TRUE ~ 1)) %&gt;%
-  
 # rename the dichotomous/check-all columns:
   rename(target_pop_Black = `Black or African American`,
          target_pop_Latinx = `Hispanic or Latino`,
@@ -951,28 +935,25 @@ site_recode &lt;- content_recode %&gt;%
            vaccination_sites == 1 ~ 0,
            !is.na(other) ~ 1))
 
-#writing a little function to help in recoding below
+# create a function (i.e., which_site) to help with recoding... (?):
 which_site &lt;- function(x, y){names(which(x==y))[1]}
 
-#here we locate which column (community health center, school, etc.)
-#there is a 1 and then grabbing the columns name for that column and 
-#putting in variable called study_site_recode. also dealing with missing
-#values, if &quot;missing&quot; make it an NA. 
+#here we locate which column (e.g., community health center, school, etc.)
+#there is a value of 1 and grab the column&#39;s name for the new categorical variable, study_site 
 
 site_recode &lt;- site_recode  %&gt;%
-  mutate(study_site_recode = apply(site_recode, 1, which_site, y = 1))
+  mutate(study_site = apply(site_recode, 1, which_site, y = 1))
 
 # note that a few publications had multiple sites
 # &quot;community_health_center&quot; &quot;other&quot;: coded as community_health_center
-#&quot;hospital&quot;      &quot;care_facility&quot;: coded as hospital
+# &quot;hospital&quot;      &quot;care_facility&quot;: coded as hospital
 
-# putting recoded version of study site back onto data frame of interest
-
+# add the categorical study_site variable to the content_recode dataframe:
 content_recode &lt;- content_recode %&gt;% 
-  mutate(study_site_recode = site_recode$study_site_recode)
+  mutate(study_site = site_recode$study_site)
 
 #quick check:
-table(content_recode$study_site_recode, 
+table(content_recode$study_site, 
       content_recode$`School`)</code></pre>
 <pre><code>##                   
 ##                    0 1
@@ -980,7 +961,7 @@ table(content_recode$study_site_recode,
 ##   community_events 1 0
 ##   hospital         2 0
 ##   school           0 1</code></pre>
-<pre class="r"><code>table(content_recode$study_site_recode, 
+<pre class="r"><code>table(content_recode$study_site, 
       content_recode$`Community health center`)</code></pre>
 <pre><code>##                   
 ##                    0
@@ -990,9 +971,7 @@ table(content_recode$study_site_recode,
 ##   school           1</code></pre>
 <pre class="r"><code>################################################################################
 
-#Study Design
- 
-#renaming variable names to clean things up:
+# create a new dataframe (i.e., design_recode) that keeps and renames dichotomous/check-all variables:
 design_recode &lt;- content_recode %&gt;%
   select(experimental = `Experimental`,
          quasi_experimental = `Quasi-Experimental` ,
@@ -1008,24 +987,23 @@ design_recode &lt;- content_recode %&gt;%
          survey = `Survey`,
          qual_other = `Other Qualitative`)
 
-#writing a little function to help in recoding below
-#take each study design, note if used it and paste it with other
-#study design types, as studies can have multiple study designs.
-
+# create a function (i.e., which_design) to help with recoding... (?):
 which_design &lt;-function(x, y){paste(names(which(x==y)), collapse = &quot;.&quot;)}
 
-design_recode &lt;- design_recode  %&gt;%
-  mutate(study_design_recode = apply(design_recode , 1, which_design, y = 1) ,
-         study_design_recode = case_when(
-           study_design_recode == &quot;&quot; ~ &quot;no_study_design&quot;,
-           TRUE ~ study_design_recode))
+# here, we take each study design, note if the pub used it and paste it with other study design types, since studies can have multiple study designs (?)
 
-#put study design recoded variables onto the content_recode data frame
+design_recode &lt;- design_recode  %&gt;%
+  mutate(study_design = apply(design_recode , 1, which_design, y = 1) ,
+         study_design = case_when(
+           study_design == &quot;&quot; ~ &quot;no_study_design&quot;,
+           TRUE ~ study_design))
+
+# bind the whole design_recode dataframe to the content_recode dataframe:
 content_recode &lt;- bind_cols(content_recode, design_recode,
                             .name_repair = &quot;minimal&quot;)
 
 #quick check:
-table(design_recode$study_design_recode, 
+table(design_recode$study_design, 
       design_recode$observational)</code></pre>
 <pre><code>##                                
 ##                                  0  1
@@ -1038,21 +1016,8 @@ table(design_recode$study_design_recode,
 ##   simulation                     1  0</code></pre>
 <pre class="r"><code>################################################################################
 
-#single variable, combining detailed study design with type of analysis?
-
-#study_design %&gt;% 
-#  mutate(type_of_analysis_detailed = case_when(
-#    TRUE ~ content_recode$type_of_analysis)
-#         )
-
-################################################################################
-
-# Community Engagement
-# now recoding community engagement, one variable if any community engagement
-# and then type of community engagement, detailed 
-# renaming variables and making other binary 0/1
-
-community_engage &lt;- content_recode %&gt;%
+# create a new dataframe (i.e., engage_recode) that keeps and renames dichotomous/check-all variables and dummies comments in &quot;other&quot;:
+engage_recode &lt;- content_recode %&gt;%
   select(engage_broadcast_media = `Broadcast media (e.g., press conferences, TV interviews`,
          engage_entertainment = `Entertainment activities (e.g., picnics, raffles` ,
          engage_focus_groups = `Focus groups and/or surveys` ,
@@ -1062,47 +1027,47 @@ community_engage &lt;- content_recode %&gt;%
          engage_print_media = `Print media (e.g., press releases, newspaper articles`,
          engage_other1 = `Other Community Engagement 1`,
          engage_other2 = `Other Community Engagement 2`) %&gt;%
-  mutate(engage_advisory_board = case_when(engage_other1  %in% 
-                              c(&quot;ad-hoc advisory group of community leaders in each SYCT county todevelop a community-informed strategy for distribution of at-home test kits&quot;,
+  mutate(engage_advisory_board = case_when(
+           engage_other1 %in% c(&quot;ad-hoc advisory group of community leaders in each SYCT county todevelop a community-informed strategy for distribution of at-home test kits&quot;,
                                 &quot;Community Advisory Boards&quot;) ~ 1, 
-                              TRUE ~ 0),
-    
-    engage_peer_influence= case_when(engage_other1  %in% 
-                              c(&quot;Identifying frontline champions&quot;,
+                                TRUE ~ 0),
+         engage_peer_influence = case_when(
+           engage_other1 %in% c(&quot;Identifying frontline champions&quot;,
                                 &quot;Peer influencers&quot;,
                                 &quot;Community member referral networks&quot;) ~ 1, 
-                              TRUE ~ 0),
-    engage_transportation= case_when(engage_other1  %in% 
-                              c(&quot;Street outreach; mobile vans&quot;,
+                                 TRUE ~ 0),
+         engage_transportation = case_when(
+           engage_other1 %in% c(&quot;Street outreach; mobile vans&quot;,
                                 &quot;transportation to vaccination sites;  a network of public health/clinical health service providers to provide vaccinations; widespread vaccinations sites (ex. malls; removal of residential status as a barrier to obtain vaccines; public health worker delivery of vaccines in rural areas&quot;) ~ 1, 
-                              TRUE ~ 0),
-    
-    engage_partnerships = case_when(engage_other1  %in% 
-                              c(&quot;COVID-19 data collection through the partnership for decision-making&quot;,
+                                 TRUE ~ 0),
+         engage_partnerships = case_when(
+           engage_other1 %in% c(&quot;COVID-19 data collection through the partnership for decision-making&quot;,
                                 &quot;Multi-disciplinary  collaborative  research and partnerships  focused  on  addressing community needs and building a translational science workforce to enhance project implementation and reach; faculty  members  engage  closely  with  local  health  departments,&quot;,
                                 &quot;Conducted an Asian-American and Native Hawaiian/Pacific Islander COVID-19 Needs Assessment&quot;) ~ 1,
-                              TRUE ~ engage_partnerships),
-    engage_meetings_events = case_when(engage_other1 %in% 
-                              c(&quot;Free community-based Latino testing events&quot;) ~ 1,
-                              TRUE ~ engage_meetings_events),
-    engage_other1 = case_when(is.na(engage_other1) | 
-                                engage_advisory_board == 1 |
-                                engage_peer_influence == 1 |
-                                engage_partnerships == 1 |
-                                engage_meetings_events == 1 |
-                                engage_transportation == 1 ~ 0,
-                                !is.na(engage_other1) ~ 1),
-    engage_other2 = case_when(is.na(engage_other2) ~ 0,
-                             !is.na(engage_other2) ~ 1))
+                                TRUE ~ engage_partnerships),
+         engage_meetings_events = case_when(
+           engage_other1 %in% c(&quot;Free community-based Latino testing events&quot;) ~ 1,
+                                TRUE ~ engage_meetings_events),
+         engage_other1 = case_when(
+           is.na(engage_other1) | 
+           engage_advisory_board == 1 |
+           engage_peer_influence == 1 |
+           engage_partnerships == 1 |
+           engage_meetings_events == 1 |
+           engage_transportation == 1 ~ 0,
+           !is.na(engage_other1) ~ 1),
+         engage_other2 = case_when(is.na(engage_other2) ~ 0,
+           !is.na(engage_other2) ~ 1))
  
-community_engage  &lt;- community_engage   %&gt;%
-  mutate(community_engage_number = apply(community_engage[, ], 1, sum),
-         community_engage_binary = 1 * (community_engage_number &gt; 0),
-         community_engage_recode = apply(community_engage  , 1, which_design, y = 1) ,
-         community_engage_recode = case_when(community_engage_recode == &quot;&quot; ~ &quot;no_engagement&quot;,
-                                         TRUE ~ community_engage_recode))
+engage_recode &lt;- engage_recode   %&gt;%
+  mutate(engage_number = apply(engage_recode[, ], 1, sum),
+         engage_binary = 1 * (engage_number &gt; 0),
+         cmty_engage = apply(engage_recode, 1, which_design, y = 1),
+         cmty_engage = case_when(
+           cmty_engage == &quot; &quot; ~ &quot;no_engagement&quot;,
+           TRUE ~ cmty_engage))
 
-print(community_engage, width=100000, n =15)</code></pre>
+print(engage_recode, width=100000, n =15)</code></pre>
 <pre><code>## # A tibble: 25 × 15
 ##    engage_broadcast_media engage_entertainment engage_focus_groups
 ##                     &lt;dbl&gt;                &lt;dbl&gt;               &lt;dbl&gt;
@@ -1155,60 +1120,45 @@ print(community_engage, width=100000, n =15)</code></pre>
 ## 13                  0             0             0                     0
 ## 14                  0             0             0                     0
 ## 15                  0             0             0                     0
-##    engage_peer_influence engage_transportation community_engage_number
-##                    &lt;dbl&gt;                 &lt;dbl&gt;                   &lt;dbl&gt;
-##  1                     0                     0                       0
-##  2                     0                     0                       0
-##  3                     0                     0                       0
-##  4                     0                     0                       2
-##  5                     0                     0                       2
-##  6                     0                     0                       3
-##  7                     0                     0                       0
-##  8                     0                     0                       0
-##  9                     0                     0                       1
-## 10                     0                     0                       0
-## 11                     0                     0                       0
-## 12                     0                     0                       0
-## 13                     0                     0                       0
-## 14                     0                     0                       0
-## 15                     0                     0                       0
-##    community_engage_binary
-##                      &lt;dbl&gt;
-##  1                       0
-##  2                       0
-##  3                       0
-##  4                       1
-##  5                       1
-##  6                       1
-##  7                       0
-##  8                       0
-##  9                       1
-## 10                       0
-## 11                       0
-## 12                       0
-## 13                       0
-## 14                       0
-## 15                       0
-##    community_engage_recode                                       
-##    &lt;chr&gt;                                                         
-##  1 no_engagement                                                 
-##  2 no_engagement                                                 
-##  3 no_engagement                                                 
-##  4 engage_meetings_events.engage_partnerships                    
-##  5 engage_focus_groups.engage_meetings_events                    
-##  6 engage_broadcast_media.engage_social_media.engage_partnerships
-##  7 no_engagement                                                 
-##  8 no_engagement                                                 
-##  9 engage_focus_groups                                           
-## 10 no_engagement                                                 
-## 11 no_engagement                                                 
-## 12 no_engagement                                                 
-## 13 no_engagement                                                 
-## 14 no_engagement                                                 
-## 15 no_engagement                                                 
+##    engage_peer_influence engage_transportation engage_number engage_binary
+##                    &lt;dbl&gt;                 &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+##  1                     0                     0             0             0
+##  2                     0                     0             0             0
+##  3                     0                     0             0             0
+##  4                     0                     0             2             1
+##  5                     0                     0             2             1
+##  6                     0                     0             3             1
+##  7                     0                     0             0             0
+##  8                     0                     0             0             0
+##  9                     0                     0             1             1
+## 10                     0                     0             0             0
+## 11                     0                     0             0             0
+## 12                     0                     0             0             0
+## 13                     0                     0             0             0
+## 14                     0                     0             0             0
+## 15                     0                     0             0             0
+##    cmty_engage                                                     
+##    &lt;chr&gt;                                                           
+##  1 &quot;&quot;                                                              
+##  2 &quot;&quot;                                                              
+##  3 &quot;&quot;                                                              
+##  4 &quot;engage_meetings_events.engage_partnerships&quot;                    
+##  5 &quot;engage_focus_groups.engage_meetings_events&quot;                    
+##  6 &quot;engage_broadcast_media.engage_social_media.engage_partnerships&quot;
+##  7 &quot;&quot;                                                              
+##  8 &quot;&quot;                                                              
+##  9 &quot;engage_focus_groups&quot;                                           
+## 10 &quot;&quot;                                                              
+## 11 &quot;&quot;                                                              
+## 12 &quot;&quot;                                                              
+## 13 &quot;&quot;                                                              
+## 14 &quot;&quot;                                                              
+## 15 &quot;&quot;                                                              
 ## # … with 10 more rows</code></pre>
-<pre class="r"><code>table(community_engage$community_engage_recode)</code></pre>
+<pre class="r"><code>table(engage_recode$cmty_engage)</code></pre>
 <pre><code>## 
+##                                                                                                         
+##                                                                                                      17 
 ##                                          engage_broadcast_media.engage_social_media.engage_partnerships 
 ##                                                                                                       1 
 ##                                                                                     engage_focus_groups 
@@ -1222,13 +1172,12 @@ print(community_engage, width=100000, n =15)</code></pre>
 ##                                                              engage_meetings_events.engage_partnerships 
 ##                                                                                                       1 
 ##                                                                                     engage_partnerships 
-##                                                                                                       1 
-##                                                                                           no_engagement 
-##                                                                                                      17</code></pre>
-<pre class="r"><code>table(community_engage$community_engage_recode, 
-      community_engage$community_engage_binary)</code></pre>
+##                                                                                                       1</code></pre>
+<pre class="r"><code>table(engage_recode$cmty_engage, 
+      engage_recode$engage_binary)</code></pre>
 <pre><code>##                                                                                                          
 ##                                                                                                            0
+##                                                                                                           17
 ##   engage_broadcast_media.engage_social_media.engage_partnerships                                           0
 ##   engage_focus_groups                                                                                      0
 ##   engage_focus_groups.engage_meetings_events                                                               0
@@ -1236,24 +1185,23 @@ print(community_engage, width=100000, n =15)</code></pre>
 ##   engage_focus_groups.engage_partnerships                                                                  0
 ##   engage_meetings_events.engage_partnerships                                                               0
 ##   engage_partnerships                                                                                      0
-##   no_engagement                                                                                           17
 ##                                                                                                          
 ##                                                                                                            1
+##                                                                                                            0
 ##   engage_broadcast_media.engage_social_media.engage_partnerships                                           1
 ##   engage_focus_groups                                                                                      2
 ##   engage_focus_groups.engage_meetings_events                                                               1
 ##   engage_focus_groups.engage_meetings_events.engage_social_media.engage_print_media.engage_peer_influence  1
 ##   engage_focus_groups.engage_partnerships                                                                  1
 ##   engage_meetings_events.engage_partnerships                                                               1
-##   engage_partnerships                                                                                      1
-##   no_engagement                                                                                            0</code></pre>
-<pre class="r"><code>#put study design recoded variables onto the content_recode data frame:
-content_recode &lt;- bind_cols(content_recode, community_engage,
+##   engage_partnerships                                                                                      1</code></pre>
+<pre class="r"><code># bind the whole design_recode dataframe to the content_recode dataframe:
+content_recode &lt;- bind_cols(content_recode, engage_recode,
                             .name_repair = &quot;minimal&quot;)
 
 ################################################################################
 
-# TSBM (translational science benefits model)  vaccines
+# TSBM (translational science benefits model): vaccines
 
 # need to create 4 basic variables of 1 = did translational science model
 # and 0 = did not do it
@@ -1380,7 +1328,7 @@ print(content_recode[,c(TSBM_vaccine_columns,
 ##   1                                                1</code></pre>
 <pre class="r"><code>################################################################################
 
-# TSBM (translational science benefits model) testing
+# TSBM (translational science benefits model): testing
 
 content_recode &lt;- content_recode %&gt;%
   mutate(
@@ -1408,8 +1356,8 @@ content_recode &lt;- content_recode %&gt;%
        `Testing Policies and Legislation` == 1) ~ 1,
         TRUE ~ 0) )
 
-#now creating extra variables, number of TSBM benefits, pasted together
-#benefits they did and binary indicator if did any benefit
+# now creating extra variables, number of TSBM benefits, pasted together
+# benefits they did and binary indicator if did any benefit
 
 TSBM_testing_columns &lt;- c(&quot;TSBM_testing_clinical&quot;, 
                           &quot;TSBM_testing_public_health&quot;,
@@ -1423,7 +1371,7 @@ content_recode  &lt;- content_recode   %&gt;%
          TSBM_testing_recode = case_when(TSBM_testing_recode == &quot;&quot; ~ &quot;no_TSBM_vaccines&quot;,
                                           TRUE ~ TSBM_testing_recode))
 
-#quick check:
+# quick check:
 print(content_recode[, c(TSBM_testing_columns, 
                          &quot;TSBM_testing_binary&quot;, 
                          &quot;TSBM_testing_recode&quot;, 
@@ -1483,8 +1431,7 @@ print(content_recode[, c(TSBM_testing_columns,
 ##     TSBM_testing_public_health TSBM_testing_public_health.TSBM_testing_economic
 ##   0                          0                                                0
 ##   1                          6                                                1</code></pre>
-<pre class="r"><code>#rename some health variables
-
+<pre class="r"><code># rename some health variables:
 content_recode &lt;- content_recode %&gt;% 
   rename(Neurological = `Neurological disorders (includes Guillain-Barre syndrome)`,
          HIV = `HIV/AIDS`,
@@ -1514,9 +1461,9 @@ vars &lt;- c(&quot;pmid&quot;,
           &quot;target_pop_Latinx&quot;, 
           &quot;target_pop_Indigenous&quot;, 
           &quot;target_pop_Asian&quot;,
-          &quot;study_site_recode&quot;, 
+          &quot;study_site&quot;, 
           colnames(design_recode),
-          colnames(community_engage), 
+          colnames(engage_recode), 
           TSBM_vaccine_columns, 
           &quot;TSBM_vaccines_binary&quot;, 
           &quot;TSBM_vaccines_recode&quot;, 
@@ -1532,20 +1479,22 @@ vars &lt;- c(&quot;pmid&quot;,
           &quot;Obesity&quot;, 
           &quot;Preeclampsia&quot;)
 
- content_recode &lt;- content_recode %&gt;% select(all_of(vars))
-
+ content_recode &lt;- content_recode %&gt;% 
+   select(all_of(vars))
+ 
 ################################################################################
 
-# read in (or import) recoded publication *.csv file:
+# read in (or import) recoded Publication *.csv file:
 pubs &lt;- read_csv(&quot;2021.09.23 Publications_with_date_variables.csv&quot;) %&gt;%
 # duplicate PMIDs may be associated more than one project, but we only need them once since we&#39;re only interested in the attributes of the paper. if the following variables are distinct (i.e., unique PubMed ID numbers), then keep the values (?):
   distinct(pmid, .keep_all = T)</code></pre>
 <pre><code>## Rows: 25 Columns: 44
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
-## chr  (31): date_id, date_update, method, pi_accept, acknow_nih, acknow_radx,...
+## chr  (29): method, pi_accept, acknow_nih, acknow_radx, acknow_grant, covid, ...
 ## dbl  (10): proj_num, cycle, year_cite, day, volume, issue, cite_count, pmid,...
 ## lgl   (2): fund5, fund6
+## dttm  (2): date_id, date_update
 ## date  (1): date_publish
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
@@ -1559,43 +1508,337 @@ pubs &lt;- read_csv(&quot;2021.09.23 Publications_with_date_variables.csv&quot;)
 
 # merge content analysis data onto publication data and export
 
-publication_attributes &lt;- left_join(x = content_recode, y = pubs, by = &quot;pmid&quot;)
+pub_attributes &lt;- left_join(x = content_recode, y = pubs, by = &quot;pmid&quot;)
 
 #only keep publication if on pub-author edgelist?
 temp_edges &lt;- read_csv(&quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)</code></pre>
 <pre><code>## Rows: 209 Columns: 6
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
-## chr (3): author_name, author_aff, author_type
+## chr (3): author_name, authors_aff, author_type
 ## dbl (3): pmid, author_id, author_id2
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>publication_attributes &lt;- publication_attributes  %&gt;%
+<pre class="r"><code># sort pub dataframe by pmid variable (?):
+pub_attributes &lt;- pub_attributes  %&gt;%
   filter(pmid %in% temp_edges$pmid)
 
 # output (or export) the publication_attributes dataframe you created to a *.csv file:
-write_csv(publication_attributes, &quot;2021.09.23 Publication_Attribute_Data.csv&quot;)</code></pre>
+write_csv(pub_attributes, &quot;2021.09.23 Publication_Attribute_Data.csv&quot;)</code></pre>
+</div>
+<div id="create-author-publication-edgelist" class="section level2">
+<h2>5. Create Author-Publication Edgelist</h2>
+<pre class="r"><code># Goal: to merge recoded Author Affiliations *.csv file (see #1.) with recoded Publication *.csv file (see #2.)
+
+# install (for the first time only) and load packages:
+#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;readxl&quot;)
+#install.packages(&quot;lubridate&quot;)
+
+#library(tidyverse)
+#library(readxl)
+#library(lubridate)
+
+# read in (or import) recoded Author Affiliation *.csv file:
+#author_affil &lt;- read_csv(&quot;2021.09.23 Author_Affiliations_no_missing_ids.csv&quot;)
+
+#select useful columns to keep in the dataframe (i.e., just PMIDs &amp; author IDs):
+author_affil &lt;- author_affil %&gt;%
+  select(pmid, author_id, author_id2)
+
+# read in (or import) recoded Publication *.csv file and merge key edge attributes on the publication onto the edgelist: 
+pubs &lt;- read_csv(&quot;2021.09.23 Publications_with_date_variables.csv&quot;) %&gt;%
+  distinct(pmid, .keep_all = TRUE)</code></pre>
+<pre><code>## Rows: 25 Columns: 44
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (29): method, pi_accept, acknow_nih, acknow_radx, acknow_grant, covid, ...
+## dbl  (10): proj_num, cycle, year_cite, day, volume, issue, cite_count, pmid,...
+## lgl   (2): fund5, fund6
+## dttm  (2): date_id, date_update
+## date  (1): date_publish
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code># duplicate PMIDs may be associated more than one project, but we only need them once since we&#39;re only interested in the attributes of the paper. if the following variables are distinct (i.e., unique PubMed ID numbers), then keep the values.
+
+#select useful columns to keep in the dataframe:
+pubs &lt;- pubs %&gt;% 
+  select(proj_num, cycle, year_cite, month, day, date_publish, weeks_from_start, months_from_start, pmid)
+
+# create a new dataframe (i.e., author_pub_edgelist) that uses left_join to map edge attributes from pubs into the edgelist, based on PMIDs as the identifier:
+author_pub_edgelist &lt;- left_join(x = author_affil, y = pubs, by = &quot;pmid&quot;)
+
+# reorder the columns:
+author_pub_edgelist &lt;- author_pub_edgelist %&gt;% 
+  select(author_id2, pmid, cycle:months_from_start, author_id)
+
+# only keep pubs that are in the content analysis data set? read in the content analysis data for the publications:
+#content &lt;- read_excel(&quot;2021.09.23 Content_Analysis-CLEAN.xlsx&quot;)
+
+# sort edgelist dataframe by pmid variable (?):
+#author_pub_edgelist &lt;- author_pub_edgelist %&gt;% 
+#  filter(pmid %in% content$pmid)
+
+# output (or export) the author_pub_edgelist dataframe you created to a *.csv file:
+write_csv(author_pub_edgelist, &quot;2021.09.23 Author_Pub_Edgelist.csv&quot;)</code></pre>
+</div>
+<div id="optional-create-project-publication-list" class="section level2">
+<h2>6. Optional: Create Project-Publication List</h2>
+<pre class="r"><code># Goal: to output a list showing which projects are associated with each publication (pmid)
+
+# install (for the first time only) and load packages
+#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;readxl&quot;)
+#install.packages(&quot;lubridate&quot;)
+
+#library(tidyverse)
+#library(readxl)
+#library(lubridate)
+
+# read in (or import) recoded Publications *.csv file 
+#pubs &lt;- read_csv(&quot;2021.09.23 Publications_with_date_variables.csv&quot;)
+
+# only keep pubs that are in the content data set? read in the content analysis data for the publications:
+#content &lt;- read_excel(&quot;2021.09.23 Content_Analysis-CLEAN.xlsx&quot;)
+
+# sort pubs dataframe by pmid variable (?):
+pubs &lt;- pubs %&gt;% 
+  filter(pmid %in% content$pmid)
+
+# create a function (i.e., which_proj) to grab the project number, for a given variable (e.g., pmid):
+which_proj &lt;- function(dat, var, id){
+    dat$proj_num[dat[, var] == id]
+  }
+
+# define unique set of pmids:
+pmids &lt;- unique(pubs$pmid)
+
+# create a data frame (?) (i.e., list_of_projects) that grabs all projects associated with a pmid: 
+list_of_projects &lt;- lapply(pmids, which_proj, dat = pubs, var = &quot;pmid&quot;)
+### not sure what to do with missing column: Warning: Unknown or uninitialised column: `proj_num`.
+
+names(list_of_projects) &lt;- pmids
+
+# save out list of projects for each pmid:
+save(list_of_projects, file = &quot;2021.09.23 Project_Publication_List.Rdata&quot;)</code></pre>
+</div>
+<div id="create-co-authorship-networkfinally" class="section level2">
+<h2>7. Create Co-Authorship Network–finally!</h2>
+<pre class="r"><code># Goal: to construct basic igraph objects with:
+# Author_Attribute_Data.csv (see #3.)
+# Publication_Attribute_Data.csv (see #4.)
+# Publication_Author_Edgelist.csv (see #5.)
+
+# install (for the first time only) and load packages:
+#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;igraph&quot;)
+
+#library(tidyverse)
+library(igraph)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;igraph&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:lubridate&#39;:
+## 
+##     %--%, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     as_data_frame, groups, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
+## 
+##     compose, simplify</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     crossing</code></pre>
+<pre><code>## The following object is masked from &#39;package:tibble&#39;:
+## 
+##     as_data_frame</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     decompose, spectrum</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     union</code></pre>
+<pre class="r"><code># read in (or import) recoded Author Attribute *.csv file:
+author_affil_wide &lt;- read_csv(&quot;2021.09.23 Author_Attribute_Data.csv&quot;,
+                  col_types = cols(author_id2 = col_character()))
+
+# read in (or import) recoded Publication Attribute *.csv file and set pmid to character:
+pub_attributes &lt;- read_csv(&quot;2021.09.23 Publication_Attribute_Data.csv&quot;,
+                  col_types = cols(pmid = col_character()))
+
+#read in (or import) recoded Edgelist *.csv files and set pmid to character:
+author_pub_edgelist &lt;- read_csv(&quot;2021.09.23 Author_Pub_Edgelist.csv&quot;,
+                       col_types = cols(pmid = col_character()))
+
+################################################################################
+                       
+# create a combined data set of publication and author attributes 
+# with shared identifier variables (i.e., id, node) in both dataframes
+
+# publications: copy the PMID as the IDs:
+pub_attributes &lt;- pub_attributes  %&gt;%
+  mutate(id = pmid, node = &quot;publication&quot;)
+
+# authors: copy the author_id2 as the IDs:
+author_affil_wide &lt;- author_affil_wide  %&gt;%
+  mutate(id = author_id2, node = &quot;author&quot;)
+
+# define the attributes that are shared across the two dataframes (i.e., ids, type):
+shared_identifiers &lt;- c(&quot;id&quot;, &quot;node&quot;)
+
+# append or create a single, shared dataframe, stacking author attributes on top of publication attributes (i.e., id, node)
+stacked.df &lt;- bind_rows(author_affil_wide %&gt;% select(all_of(shared_identifiers)), 
+                    pub_attributes %&gt;% select(all_of(shared_identifiers)) )
+
+# create a temporary dataframe with author-specific attributes: put NAs for the publications:
+temp_pub_data &lt;- author_affil_wide[1, ]
+temp_pub_data[1, ] &lt;- NA
+temp_pub_data_NA &lt;- tibble(temp_pub_data, .rows = nrow(pub_attributes))
+
+# append author and publication data for author-specific attributes,
+# excluding the shared attributes:
+author_specific &lt;- bind_rows(author_affil_wide %&gt;% select(-shared_identifiers), 
+                             temp_pub_data_NA %&gt;%select(-shared_identifiers))</code></pre>
+<pre><code>## Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
+## ℹ Please use `all_of()` or `any_of()` instead.
+##   # Was:
+##   data %&gt;% select(shared_identifiers)
+## 
+##   # Now:
+##   data %&gt;% select(all_of(shared_identifiers))
+## 
+## See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</code></pre>
+<pre class="r"><code># publication-specific attributes: put NAs for the authors:
+temp_author_data &lt;- pub_attributes[1, ]
+temp_author_data[1, ] &lt;- NA
+temp_author_data_NA &lt;- tibble(temp_author_data, .rows = nrow(author_affil_wide))
+
+pub_specific &lt;- bind_rows(temp_author_data_NA %&gt;% select(-shared_identifiers),
+                                  pub_attributes %&gt;% select(-shared_identifiers))
+
+# append stacked dataframe, author specific dataframe, and publication-specific dataframe:
+attributes_author_pub  &lt;- bind_cols(stacked.df, author_specific, pub_specific)
+
+# add sender/receiver variables in the edgelist
+# sender is author (author_id2), and receiver is publication (pmid):
+author_pub_edgelist &lt;- author_pub_edgelist %&gt;% 
+  mutate(sender = author_id2, receiver = pmid) %&gt;%
+  select(sender, receiver, cycle:author_id, author_id2, pmid)
+
+############################
+# Constructing the Network #
+############################
+
+# Construct the igraph object, using the edgelist and two attribute files 
+
+# create a &#39;named&#39; vector (i.e., type), showing if the node is an author (0) or publication (1) (i.e., type_binary),
+# with the name of each element set to author_ids/PMIDs 
+# will print an addition 0 if author or 1 if publication
+attributes_author_pub &lt;- attributes_author_pub %&gt;%
+  mutate(type_binary = 1*(node == &quot;publication&quot;))
+
+type &lt;- attributes_author_pub$type_binary
+names(type) &lt;- attributes_author_pub$id
+
+# now creating network in igraph, with types set to type and 
+# edges grabbed from sender/receiver columns, 
+# transpose and make the 2 column matrix (i.e., the sender and receiver columns)into a vector (i.e., edge):
+
+author_pub_edgelist &lt;- author_pub_edgelist %&gt;%
+  mutate(sender2 = as.character(author_pub_edgelist$sender))
+
+edge &lt;- c(t(author_pub_edgelist %&gt;% 
+              select(sender2, receiver)))
+
+#edge_numeric &lt;- as.numeric(factor(edge))
+#levels &lt;- levels(factor(edge))
+
+# vector of senders (author_id2) and receivers (PMIDs)
+
+coauthorship_net &lt;- make_bipartite_graph(edges = edge, types = type)
+#which vertex/node exists in edge, but not type?
+ setdiff(edge, type)</code></pre>
+<pre><code>##   [1] &quot;57220026426&quot; &quot;33228253&quot;    &quot;35452136000&quot; &quot;57220023616&quot; &quot;57220028740&quot;
+##   [6] &quot;57220036794&quot; &quot;57220038353&quot; &quot;57201635827&quot; &quot;57192937828&quot; &quot;33323475&quot;   
+##  [11] &quot;57216772894&quot; &quot;57216773875&quot; &quot;7005932893&quot;  &quot;57102893100&quot; &quot;55586521200&quot;
+##  [16] &quot;35105616100&quot; &quot;57220807007&quot; &quot;7003596797&quot;  &quot;8285535700&quot;  &quot;33471114&quot;   
+##  [21] &quot;57204475312&quot; &quot;34871585500&quot; &quot;6506644120&quot;  &quot;7202655127&quot;  &quot;57203503067&quot;
+##  [26] &quot;24559254500&quot; &quot;57225882475&quot; &quot;33577743&quot;    &quot;54784459100&quot; &quot;57203164460&quot;
+##  [31] &quot;7004054150&quot;  &quot;20336747600&quot; &quot;33764497&quot;    &quot;57191069525&quot; &quot;42661584300&quot;
+##  [36] &quot;36552577100&quot; &quot;54780229200&quot; &quot;57222561060&quot; &quot;7102617491&quot;  &quot;57217220824&quot;
+##  [41] &quot;33775510&quot;    &quot;8242550800&quot;  &quot;57209403965&quot; &quot;55894087200&quot; &quot;7102653518&quot; 
+##  [46] &quot;56661885800&quot; &quot;57188962470&quot; &quot;57222579702&quot; &quot;57222575888&quot; &quot;54781732100&quot;
+##  [51] &quot;7102902130&quot;  &quot;57194655586&quot; &quot;57221463718&quot; &quot;57221478098&quot; &quot;57223310024&quot;
+##  [56] &quot;33812965&quot;    &quot;57216579290&quot; &quot;57189017887&quot; &quot;57221505466&quot; &quot;35956823200&quot;
+##  [61] &quot;57223273144&quot; &quot;7201439663&quot;  &quot;35558534100&quot; &quot;6603429198&quot;  &quot;33861873&quot;   
+##  [66] &quot;57217117866&quot; &quot;6603005716&quot;  &quot;7003966799&quot;  &quot;35891847400&quot; &quot;56030099400&quot;
+##  [71] &quot;36108886100&quot; &quot;7102090811&quot;  &quot;57201284143&quot; &quot;57210142538&quot; &quot;57217341894&quot;
+##  [76] &quot;33861978&quot;    &quot;55895259400&quot; &quot;33870242&quot;    &quot;8842663900&quot;  &quot;57202968470&quot;
+##  [81] &quot;6507498358&quot;  &quot;57219552278&quot; &quot;57218318041&quot; &quot;57192894008&quot; &quot;33929934&quot;   
+##  [86] &quot;15044573600&quot; &quot;57165902200&quot; &quot;7003401025&quot;  &quot;24399866200&quot; &quot;10938812100&quot;
+##  [91] &quot;7004687497&quot;  &quot;33993265&quot;    &quot;7101867957&quot;  &quot;8770762400&quot;  &quot;7102724879&quot; 
+##  [96] &quot;6701913563&quot;  &quot;6602882989&quot;  &quot;57223592557&quot; &quot;57273541500&quot; &quot;57201197202&quot;
+## [101] &quot;57223619842&quot; &quot;57223638097&quot; &quot;8654801000&quot;  &quot;57222310846&quot; &quot;57433725900&quot;
+## [106] &quot;56937637400&quot; &quot;34010526&quot;    &quot;7004958298&quot;  &quot;34047758&quot;    &quot;56726795700&quot;
+## [111] &quot;56992137400&quot; &quot;34081608&quot;    &quot;57258346000&quot; &quot;34769828800&quot; &quot;57205524437&quot;
+## [116] &quot;57226609034&quot; &quot;55661493300&quot; &quot;7202729955&quot;  &quot;6603849738&quot;  &quot;57222044013&quot;
+## [121] &quot;34092431&quot;    &quot;15834866400&quot; &quot;15124590700&quot; &quot;57209365128&quot; &quot;34143195&quot;   
+## [126] &quot;6602960850&quot;  &quot;57224855499&quot; &quot;13908371800&quot; &quot;57224861523&quot; &quot;55615499000&quot;
+## [131] &quot;56911970000&quot; &quot;34159841&quot;    &quot;57498495100&quot; &quot;36850389900&quot; &quot;34264327&quot;   
+## [136] &quot;7006733030&quot;  &quot;57226121039&quot; &quot;35737232200&quot; &quot;57226101415&quot; &quot;7201375470&quot; 
+## [141] &quot;57198326551&quot; &quot;57201190256&quot; &quot;57226103648&quot; &quot;57199725284&quot; &quot;57215224223&quot;
+## [146] &quot;55342047200&quot; &quot;35811377600&quot; &quot;57218675513&quot; &quot;34274126&quot;    &quot;6603542392&quot; 
+## [151] &quot;15841191100&quot; &quot;6506993064&quot;  &quot;34294425&quot;    &quot;26421597500&quot; &quot;44861686400&quot;
+## [156] &quot;57222625524&quot; &quot;57234670600&quot; &quot;34375655&quot;    &quot;34449885&quot;    &quot;7201657480&quot; 
+## [161] &quot;57216370590&quot; &quot;57193723605&quot; &quot;57253157300&quot; &quot;35103612800&quot; &quot;35290709200&quot;
+## [166] &quot;34464194&quot;    &quot;7401757793&quot;  &quot;57205355603&quot; &quot;36678672500&quot; &quot;34465306&quot;   
+## [171] &quot;6701464580&quot;  &quot;16180279600&quot; &quot;30767629500&quot; &quot;57191870727&quot; &quot;6602770204&quot; 
+## [176] &quot;7005609345&quot;  &quot;55440163000&quot; &quot;57247109400&quot; &quot;57247761200&quot; &quot;57247975600&quot;
+## [181] &quot;57247975700&quot; &quot;57247761300&quot; &quot;6508155151&quot;  &quot;7003357598&quot;  &quot;55978805000&quot;
+## [186] &quot;57194406801&quot; &quot;24504213100&quot; &quot;55666330900&quot; &quot;57218991877&quot; &quot;36664663700&quot;
+## [191] &quot;57207916193&quot; &quot;36731316800&quot; &quot;56075055300&quot; &quot;57219090924&quot; &quot;57247761400&quot;
+## [196] &quot;37031890800&quot; &quot;57206489093&quot; &quot;6603913083&quot;  &quot;57248618200&quot; &quot;57247975800&quot;
+## [201] &quot;6507192326&quot;  &quot;57248193700&quot; &quot;57505973700&quot; &quot;57248618300&quot;</code></pre>
+<pre class="r"><code># check to make this sure this looks right and grab useful indicator vectors:
+
+type_from_igraph &lt;- V(coauthorship_net)$type
+table(type_from_igraph)</code></pre>
+<pre><code>## type_from_igraph
+## FALSE  TRUE 
+##   179    25</code></pre>
+<pre class="r"><code>#identify which are authors
+is_author_type &lt;- type_from_igraph == FALSE
+
+#identify which are publications
+is_publication_type &lt;- type_from_igraph == TRUE
+
+# Putting attributes onto object:
+coauthorship_net &lt;- set_vertex_attr(graph = coauthorship_net, 
+                                   name = &quot;org_final&quot;, 
+                                   value = attributes_author_pub$final_type)
+
+#getting name of publication as a vertex attribute
+coauthorship_net &lt;- set_vertex_attr(graph = coauthorship_net, 
+                                    name = &quot;title&quot;, 
+                                    value = attributes_author_pub$title)
+
+# saving out network and combined attribute file
+
+save(coauthorship_net, attributes_author_pub, 
+     file = &quot;2021.09.23 Coauthorship Network igraph.Rdata&quot;)</code></pre>
 </div>
 <div id="section" class="section level2">
-<h2>5.</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>6.</h2>
-</div>
-<div id="section-2" class="section level2">
-<h2>7.</h2>
-</div>
-<div id="section-3" class="section level2">
 <h2>8.</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-1" class="section level2">
 <h2>9.</h2>
 </div>
-<div id="section-5" class="section level2">
+<div id="section-2" class="section level2">
 <h2>10.</h2>
 </div>
-<div id="section-6" class="section level2">
+<div id="section-3" class="section level2">
 <h2>11.</h2>
 </div>
 

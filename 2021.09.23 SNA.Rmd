@@ -945,12 +945,12 @@ author_pub_edgelist <- author_pub_edgelist %>%
 edge <- c(t(author_pub_edgelist %>% 
               select(sender2, receiver)))
 
-edge_numeric <- as.numeric(factor(edge))
-levels <- levels(factor(edge))
+#edge_numeric <- as.numeric(factor(edge))
+#levels <- levels(factor(edge))
 
 # vector of senders (author_id2) and receivers (PMIDs)
 
-coauthorship_net <- make_bipartite_graph(edges = edge, types = attributes_author_pub$type_binary)
+coauthorship_net <- make_bipartite_graph(edges = edge, types = type)
 #which vertex/node exists in edge, but not type?
  setdiff(edge, type)
 
@@ -968,24 +968,17 @@ is_publication_type <- type_from_igraph == TRUE
 # Putting attributes onto object:
 coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
                                    name = "org_final", 
-                                   value = attributes_authors_publications$org_final)
+                                   value = attributes_author_pub$final_type)
 
 #getting name of publication as a vertex attribute
 coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
                                     name = "title", 
-                                    value = attributes_authors_publications$title)
+                                    value = attributes_author_pub$title)
 
 # saving out network and combined attribute file
 
-
-save(coauthorship_net, attributes_authors_publications, 
-     file = paste(wd, "network_inputs/", date,  
-                  " Coauthorship Network igraph.Rdata", sep = ""))
-
-
-
-
-
+save(coauthorship_net, attributes_author_pub, 
+     file = "2021.09.23 Coauthorship Network igraph.Rdata")
 ```
 
 ## 8.
