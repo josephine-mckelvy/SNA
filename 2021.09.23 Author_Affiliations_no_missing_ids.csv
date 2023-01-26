@@ -1,210 +1,210 @@
-pmid,author_name,author_id,author_aff,author_type,author_id2
-33471114,Acri T,8285535700,"Public Health Management Corporation, Philadelphia, PA, United States",Professional,8285535700
-34294425,Akintobi T,6506993064,"Department of Community Health & Preventive Medicine, Morehouse School of Medicine, Atlanta, Georgia, Georgia",Academic,6506993064
+pmid,author_name,author_id,authors_aff,author_type,author_id2
 33228253,Altomare NJ,57220026426,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220026426
-33812965,Amjad A,57223310024,"West Virginia Department of Health and Human Resources CharlestonWV, United States",Government,57223310024
-33812965,Atkins A,57216579290,"West Virginia Department of Health and Human Resources CharlestonWV, United States",Government,57216579290
-33993265,Aung H,7004687497,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,7004687497
-33993265,Balazs AB,7101867957,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,7101867957
-34465306,Baldenweck M,57247975600,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247975600
-34465306,Balls-Berry JE,36678672500,"Department of Neurology, Division of Memory and Aging, Washington University in St. Louis, St. Louis, MO, United States",Academic,36678672500
-33861873,Bardenheier BH,6603429198,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,6603429198
-34092431,Bardenheier BH,6603429198,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,6603429198
-34264327,Barrett ES,36850389900,"Department of Biostatistics and Epidemiology, Rutgers School of Public Health, Rutgers Environmental and Occupational Health Sciences Institute, Piscataway, NJ, United States",Academic,36850389900
-34081608,Bauer C,56992137400,"Department of Biostatistics and Data Science, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,56992137400
-34294425,Bednarczyk RA,26421597500,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,26421597500
-33577743,Begay M,57225882475,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, New Mexico Veterans Affairs Health Care Services, 111A-Pulm, 1501 San Pedro SE, Albuquerque, NM  87108, United States",Healthcare,57225882475
-34143195,Belli HM,57209365128,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,57209365128
-33861978,Berry SD,20336747600,"Hebrew SeniorLife, Hinda and Arthur Marcus Institute for Aging Research, & Harvard Medical School, Boston, MA, United States",Academic,20336747600
-33764497,Berry SD,20336747600,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew Senior Life & Harvard Medical School, Boston, MA, United States",Academic,20336747600
-34449885,Berry SD,20336747600,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States, Department of Medicine, and Harvard Medical School, Beth Israel Deaconess Medical Center, Boston, MA, United States",Academic,20336747600
-33993265,Berry SD,20336747600,"Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States",Academic,20336747600
-34375655,Bethea L,57234670600,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57234670600
-33471114,Bien-Gund CH,57204475312,"Division of Infectious Diseases, University of Pennsylvania Perelman, School of Medicine, University of Pennsylvania, 3400 Spruce St, 3 Silverstein Suite E, Philadelphia, PA  19104, United States",Academic,57204475312
-33775510,Bigelow BF,57217220824,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57217220824
-34092431,Blackman CR,57217117866,"Genesis Healthcare, Kennett SquarePA, United States",Healthcare,57217117866
-34010526,Blackman CR,57217117866,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57217117866
-33861873,Blackman CR,57217117866,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57217117866
-34264327,Blaser MJ,35452136000,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, Rutgers Center for Advance Biotechnology and Medicine, New Brunswick, NJ, United States, Department of and Pathology, Rutgers Robert Wood Johnson Medical School, Rutgers Center for Advance Biotechnology and Medicine, New Brunswick, NJ, United States",Academic,35452136000
 33228253,Blaser MJ,35452136000,"Center for Advanced Biotechnology and Medicine, Rutgers University, Piscataway, NJ  08854, United States",Academic,35452136000
-34465306,Bono K,57247975700,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247975700
-33323475,Booth R,57192937828,"Glytec, Waltham, MA, United States",Professional,57192937828
-33471114,Brady K,34871585500,"Philadelphia Department of Public Health, AIDS Activities Coordinating Office, Philadelphia, PA, United States",Government,34871585500
-34465306,Brodsky VB,57247761300,"Department of Pathology and Immunology, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247761300
-34465306,Caburnay CA,6508155151,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,6508155151
-33993265,Cameron CM,8770762400,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,8770762400
-34652783,Cameron MJ,7102724879,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,7102724879
-33993265,Canaday DH,6701913563,"Case Western Reserve University School of Medicine, Cleveland, OH, United States, Geriatric Research, Education and Clinical Center, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,6701913563
-33993265,Carias L,6602882989,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,6602882989
-33870242,Carter EB,55895259400,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,55895259400
-33775510,Catlett CL,8242550800,"Department of Emergency Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,8242550800
-33929934,Ching LL,57192894008,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,57192894008
-33775510,Clark JM,57209403965,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57209403965
-34465306,Constantino JN,7003357598,"Department of Psychiatry, Washington University in St. Louis, St. Louis, MO",Academic,7003357598
-34264327,Crabtree BF,7006733030,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,7006733030
-33323475,Crowe J,57216772894,"Glytec, Waltham, MA, United States",Professional,57216772894
-34081608,de la Cerda I,57258346000,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,57258346000
-34264327,Devance D,57226121039,"Rutgers, State University of New Jersey, University-Community Partnerships, Newark, United States",Academic,57226121039
-34465306,Dougherty NL,55978805000,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,55978805000
-34465306,Dubois JM,57194406801,"Department of Medicine, Washington University in St. Louis, St. Louis, MO, USA",Academic,57194406801
-33471114,Dugosh K,6506644120,"Public Health Management Corporation, Philadelphia, PA, United States",Professional,6506644120
-33764497,Fashaw S,57191069525,"Health Services, Policy and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57191069525
-34092431,Feifer RA,6603005716,"Genesis Healthcare, Kennett SquarePA, United States",Healthcare,6603005716
-34010526,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
-34375655,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
-33861873,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
-34081608,Fernandez ME,34769828800,"Department of Health Promotion and Behavior Sciences, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,34769828800
-34264327,Ferrante JM,35737232200,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,35737232200
-34081608,Fisher-Hoch S,57205524437,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,57205524437
-33471114,Fishman J,7202655127,"Department of Psychiatry, University of Pennsylvania Perelman, School of Medicine, Philadelphia, United States",Academic,7202655127
-33775510,Flores-Miller A,55894087200,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,55894087200
-34465306,Fritz SA,24504213100,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,24504213100
-34274126,Fujimoto AB,57218675513,"School of Industrial and Systems Engineering, Georgia Institute of Technology, 755 Ferst Dr. NW, Atlanta, GA  30332, United States",Academic,57218675513
-33323475,Garrett V,57216773875,"Glytec, Waltham, MA, United States",Professional,57216773875
-33861978,Gifford DR,7102617491,"Center for Health Policy Evaluation in Long-Term Care, American Health Care Association, Washington, DC, United States",Professional,7102617491
-33764497,Gifford DR,7102617491,"Center for Health Policy and Evaluation in LTC, American Health Care Association, Washington, DC, United States, Health Services, Policy and Practice, Brown University School of Public Health, Providence, RI, United States",Professional,7102617491
-33775510,Golden SH,7102653518,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States, Johns Hopkins Medicine Office of Diversity, Inclusion and Health Equity, Baltimore, MD, United States",Academic,7102653518
-34465306,Gotto GS,55666330900,"Institute for Human Development, University of Missouri-Kansas City, Kansas City, MO",Academic,55666330900
 33228253,Gowda RC,57220023616,"Department of Neurology, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220023616
-34092431,Gravenstein SA,7003966799,"Brown University School of Public Health, Providence, RI, United States, Warren Alpert Medical School, Brown University, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,7003966799
-34010526,Gravenstein SA,7003966799,"Alpert Medical School of Brown University, Providence, RI, United States",Academic,7003966799
-33993265,Gravenstein SA,7003966799,"Division of Geriatrics and Palliative Medicine, Alpert Medical School of Brown University, Providence, RI, United States, Center on Innovation in Long-Term Services and Supports, Providence Veterans Affairs Medical Center, Providence, RI, United States",Academic,7003966799
-33861873,Gravenstein SA,7003966799,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States, Division of Geriatrics and Palliative Medicine, Brown University Alpert Medical School, Providence, RI, United States",Academic,7003966799
-33471114,Gross R,57203503067,"Division of Infectious Diseases, University of Pennsylvania Perelman, School of Medicine, University of Pennsylvania, 3400 Spruce St, 3 Silverstein Suite E, Philadelphia, PA  19104, United States",Academic,57203503067
-34081608,Guajardo E,57226609034,"Cameron County Public Health, San Benito, TX, United States",Government,57226609034
-34465306,Gurnett CA,6701464580,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,6701464580
-34092431,Gutman R,35891847400,"Brown University School of Public Health, Providence, RI, United States",Academic,35891847400
-33861873,Gutman R,35891847400,"Department of Biostatistics, Brown University School of Public Health, Providence, RI, United States",Academic,35891847400
-33775510,Hale WD,56661885800,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,56661885800
-34464194,Hammitt LL,35290709200,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Shiprock, NM, United States",Academic,35290709200
-34449885,Hanson LC,7201657480,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States",Academic,7201657480
-33861978,Harrison J,57217341894,"Department of Health Services, Policy, and Practice, School of Public Health, Brown University, Providence, RI, United States",Academic,57217341894
-34449885,Harrison J,57217341894,"Department of Health Services, Policy, and Practice, Brown University, School of Public Health, Providence, RI, United States",Academic,57217341894
-33870242,He M,8842663900,"Department of Pathology and Immunology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,8842663900
-34465306,Head R,16180279600,"Department of Genetics, Washington University in St. Louis, St. Louis, MO, United States",Academic,16180279600
-33812965,Hendricks B,57189017887,"West Virginia University, Department of Epidemiology, Morgantown, WV, United States, West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States",Academic,57189017887
-33764497,Herndon L,42661584300,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew Senior Life & Harvard Medical School, Boston, MA, United States",Academic,42661584300
-34264327,Hill D,57226101415,"Rutgers School of Public Affairs and Administration, University-Community Partnerships, Newark, NJ, United States",Academic,57226101415
-33812965,Hodder SL,35558534100,"West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States, West Virginia University School of Medicine, Morgantown, WV, United States",Academic,35558534100
-34047758,Hotez PJ,7004958298,"Department of Pediatrics, National School of Tropical Medicine, Baylor College of Medicine, Texas Children's Hospital, Houston, United States, Department of Molecular Virology and Microbiology, National School of Tropical Medicine, Baylor College of Medicine, Texas Children's Hospital, Houston, United States",Healthcare,7004958298
-33929934,Hsieh S-C,15044573600,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,15044573600
-34264327,Hudson SV,7201375470,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,7201375470
-34465306,Imbeah A,57218991877,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57218991877
-34159841,Jagannathan R,56911970000,"Emory University School of Medicine, Atlanta, GA, United States",Academic,56911970000
-34264327,Jimenez ME,57198326551,"Department of Pediatrics, Rutgers Robert Wood Johnson Medical School, 89 French St, New Brunswick, NJ  08901, United States, Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57198326551
-33764497,Johnson KS,36552577100,"Department of Medicine, Duke University School of Medicine, Durham, NC, United States",Academic,36552577100
-33870242,Joshi CS,57202968470,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57202968470
-33577743,Kakol M,54784459100,"Division of Pulmonary and Critical Care Medicine, Stanford University Medical Center, Stanford University, Stanford, CA, United States",Healthcare,54784459100
-34465306,Kalb LG,36664663700,"Kennedy Krieger Institute, Johns Hopkins Bloomberg School of Public Health, Baltimore, MD, United States",Academic,36664663700
-34449885,Kelley CJ,57216370590,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States",Academic,57216370590
-33993265,Keresztesy D,57223592557,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223592557
-34274126,Keskinocak P,6603542392,"School of Industrial and Systems Engineering, Georgia Institute of Technology, 755 Ferst Dr. NW, Atlanta, GA  30332, United States, Department of Environmental Health, Rollins School of Public Health, Emory University, 1518 Clifton Rd. NE, Atlanta, GA  30322, United States",Academic,6603542392
-33812965,Kimble W,57221505466,"West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States",Academic,57221505466
-33993265,King CL,57273541500,"Case Western Reserve University School of Medicine, Cleveland, OH, United States, Division of Infectious Diseases, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,57273541500
-33323475,Klonoff DC,7005932893,"Diabetes Research Institute, Mills-Peninsula Medical Center, San Mateo, CA, United States",Academic,7005932893
-34159841,Klonoff DC,7005932893,"Mills-Peninsula Medical Center, San Mateo, CA, United States",Healthcare,7005932893
-33861873,Kosar CM,56030099400,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,56030099400
-34465306,Lai AM,30767629500,"Department of Medicine, Washington University in St. Louis, St. Louis, MO, United States",Academic,30767629500
-33993265,Lam EC,57201197202,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,57201197202
 33228253,Lazar MH,57220028740,"Department of Neurology, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220028740
-34081608,Lee M,55661493300,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,55661493300
-34264327,Lima D,57201190256,"Department of Pediatrics, Rutgers Robert Wood Johnson Medical School, 89 French St, New Brunswick, NJ  08901, United States",Academic,57201190256
-34465306,Liu J,57207916193,"Department of Surgery, Washington University in St. Louis, St. Louis, MO",Academic,57207916193
-33775510,Loss MJ,57188962470,"Department of Dermatology, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57188962470
-34264327,Macenat M,57226103648,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57226103648
-34465306,Maricque BB,36731316800,"Department of Neurology, Division of Memory and Aging, Washington University in St. Louis, St. Louis, MO, USA",Academic,36731316800
-34264327,Martinez Alcaraz E,57199725284,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57199725284
-33775510,McCann NS,57222579702,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57222579702
-34092431,McConeghy KW,36108886100,"Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,36108886100
-33861873,McConeghy KW,36108886100,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States",Academic,36108886100
-34081608,McCormick J,7202729955,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,7202729955
 33228253,McDonnell EP,57220036794,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220036794
-33323475,McFarland R,57102893100,"Glytec, Waltham, MA, United States",Professional,57102893100
-34465306,McKay VR,56075055300,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,56075055300
-33929934,Melish ME,57165902200,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Kapi’olani Medical Center for Women and Children, Honolulu, HI, United States, Department of Pediatrics, John A. Burns School of Medicine, Honolulu, HI, United States",Healthcare,57165902200
-34159841,Messler JC,55586521200,"Glytec, Waltham, MA, United States",Professional,55586521200
-33323475,Messler JC,55586521200,"Glytec, Waltham, MA, United States",Professional,55586521200
-33764497,Montoya A,54780229200,"Department of Medicine, University of Michigan School of Medicine, Ann Arbor, MI, United States",Academic,54780229200
-33775510,Moore AM,57222575888,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57222575888
-33861978,Mor V,7102090811,"Department of Health Services, Policy, and Practice, School of Public Health, Brown University, Providence, RI, United States",Academic,7102090811
-34092431,Mor V,7102090811,"Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,7102090811
-34010526,Mor V,7102090811,"Brown University School of Public Health, Providence, RI, United States",Academic,7102090811
-33861873,Mor V,7102090811,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States",Academic,7102090811
-34465306,Morris SM,57191870727,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,57191870727
-33775510,Mostafa HH,54781732100,"Department of Pathology, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,54781732100
-34465306,Mueller NB,57219090924,"Brown School Evaluation Center, Washington University in St Louis, St Louis, MO, United States",Academic,57219090924
-34465306,Myers LS,57247761400,"Kennedy Krieger Institute, Baltimore, MD",Academic,57247761400
-33764497,Myles L,57222561060,"Center for Health Policy and Evaluation in LTC, American Health Care Association, Washington, DC, United States",Professional,57222561060
-33870242,Mysorekar IU,6507498358,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States, Department of Pathology and Immunology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,6507498358
-34092431,Nanda A,15834866400,"Warren Alpert Medical School, Brown University, Providence, RI, United States",Academic,15834866400
-34294425,Narayan KMV,56726795700,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,56726795700
-34047758,Narayan KMV,56726795700,"Hubert Department of Global Health, Emory Rollins School of Public Health, Emory School of Medicine, Atlanta, GA, United States",Academic,56726795700
-34465306,Neidich JA,6602770204,"Department of Pathology and Immunology, Washington University in St. Louis, St. Louis, MO, United States",Academic,6602770204
-33929934,Nerurkar VR,7003401025,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,7003401025
-34465306,Newland JG,7005609345,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, United States",Academic,7005609345
-34449885,Niznik JD,57193723605,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States, Division of Pharmaceutical Outcomes and Policy, University of North Carolina at Chapel Hill, Eshelman School of Pharmacy, Chapel Hill, NC, United States, Center for Health Equity Research and Promotion, Veterans Affairs (VA) Pittsburgh Healthcare System, Pittsburgh, PA, United States",Academic,57193723605
-34143195,Ogedegbe G,6602960850,"Institute for Excellence in Health Equity, New York University Grossman School of Medicine, New York, United States",Academic,6602960850
-33993265,Oyebanji OA,57223619842,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223619842
-33775510,Page KR,7102902130,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,7102902130
-34264327,Panettieri RA,57215224223,"Rutgers Institute for Translational Medicine and Science, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57215224223
 33228253,Parekh YH,57220038353,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57220038353
 33228253,Parikh PD,57201635827,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ  08901, United States",Academic,57201635827
+33323475,Booth R,57192937828,"Glytec, Waltham, MA, United States",Professional,57192937828
+33323475,Crowe J,57216772894,"Glytec, Waltham, MA, United States",Professional,57216772894
+33323475,Garrett V,57216773875,"Glytec, Waltham, MA, United States",Professional,57216773875
+33323475,Klonoff DC,7005932893,"Diabetes Research Institute, Mills-Peninsula Medical Center, San Mateo, CA, United States",Academic,7005932893
+33323475,McFarland R,57102893100,"Glytec, Waltham, MA, United States",Professional,57102893100
+33323475,Messler JC,55586521200,"Glytec, Waltham, MA, United States",Professional,55586521200
 33323475,Pasquel FJ,35105616100,"Division of Endocrinology, Metabolism, and Lipids, Emory University School of Medicine, Atlanta, GA, United States",Academic,35105616100
-34159841,Pasquel FJ,35105616100,"Emory University School of Medicine, Atlanta, GA, United States",Academic,35105616100
-34294425,Patel SA,44861686400,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,44861686400
-33812965,Paul R,35956823200,"University of North Carolina at Charlotte, Department of Public Health Sciences, Charlotte, NC, United States",Academic,35956823200
-33993265,Payne M,57223638097,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223638097
-34264327,Pellerano MB,55342047200,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,55342047200
 33323475,Peng L,57220807007,"Rollins School of PublicHealth, Emory University, Atlanta, GA, United States",Academic,57220807007
-33775510,Phillips KH,57221478098,"Esperanza Center, Baltimore, MD, United States",Community,57221478098
-34143195,Pina P,57224855499,"Family Health Centers, New York University Langone Health, New York, United States",Healthcare,57224855499
-34465306,Poor TJ,37031890800,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,37031890800
-34449885,Porter L,57253157300,"National Association of Health Care Assistants (NAHCA), Carl Junction, MO, United States",Professional,57253157300
-34465306,Powell BJ,57206489093,"Institute for Human Development, University of Missouri-Kansas City, Kansas City, MO",Academic,57206489093
-34465306,Prener CG,55440163000,"Department of Sociology and Anthropology, Saint Louis University, St. Louis, MO, United States",Academic,55440163000
-34464194,Reid R,7401757793,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Shiprock, NM, United States",Academic,7401757793
-34081608,Reininger B,6603849738,"Department of Health Promotion and Behavior Sciences, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,6603849738
-34264327,Rivera-Núñez Z,35811377600,"Department of Biostatistics and Epidemiology, Rutgers School of Public Health, Rutgers Environmental and Occupational Health Sciences Institute, Piscataway, NJ, United States",Academic,35811377600
-33993265,Rowley CF,8654801000,"Division of Infectious Diseases, Beth Israel Deaconess Medical Center, Boston, MA, United States",Healthcare,8654801000
-34092431,Sarkar IN,15124590700,"Brown University School of Public Health, Providence, RI, United States, Warren Alpert Medical School, Brown University, Providence, RI, United States, Rhode Island Quality Institute, Providence, RI, United States",Professional,15124590700
+33323475,Umpierrez GE,7003596797,"Division of Endocrinology, Metabolism, and Lipids, Emory University School of Medicine, Atlanta, GA, United States",Academic,7003596797
+33471114,Acri T,8285535700,"Public Health Management Corporation, Philadelphia, PA, United States",Professional,8285535700
+33471114,Bien-Gund C,57204475312,"Division of Infectious Diseases, University of Pennsylvania Perelman, School of Medicine, University of Pennsylvania, 3400 Spruce St, 3 Silverstein Suite E, Philadelphia, PA  19104, United States",Academic,57204475312
+33471114,Brady K,34871585500,"Philadelphia Department of Public Health, AIDS Activities Coordinating Office, Philadelphia, PA, United States",Government,34871585500
+33471114,Dugosh K,6506644120,"Public Health Management Corporation, Philadelphia, PA, United States",Professional,6506644120
+33471114,Fishman J,7202655127,"Department of Psychiatry, University of Pennsylvania Perelman, School of Medicine, Philadelphia, United States",Academic,7202655127
+33471114,Gross R,57203503067,"Division of Infectious Diseases, University of Pennsylvania Perelman, School of Medicine, University of Pennsylvania, 3400 Spruce St, 3 Silverstein Suite E, Philadelphia, PA  19104, United States",Academic,57203503067
+33471114,Thirumurthy H,24559254500,"Division of Health Policy, University of Pennsylvania Perelman, School of Medicine, Philadelphia, United States",Academic,24559254500
+33577743,Begay M,57225882475,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, New Mexico Veterans Affairs Health Care Services, 111A-Pulm, 1501 San Pedro SE, Albuquerque, NM  87108, United States",Healthcare,57225882475
+33577743,Kakol M,54784459100,"Division of Pulmonary and Critical Care Medicine, Stanford University Medical Center, Stanford University, Stanford, CA, United States",Healthcare,54784459100
+33577743,Sood A,57203164460,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Miners’ Wellness Tele–Extension for Community Health Outcomes, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Office of Faculty Affairs and Career Development, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Miners Colfax Medical Center, Raton, NM, United States",Healthcare,57203164460
+33577743,Upson D,7004054150,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, New Mexico Veterans Affairs Health Care Services, 111A-Pulm, 1501 San Pedro SE, Albuquerque, NM  87108, United States",Healthcare,7004054150
+33764497,Berry SD,20336747600,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew Senior Life & Harvard Medical School, Boston, MA, United States",Academic,20336747600
+33764497,Fashaw S,57191069525,"Health Services, Policy and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57191069525
+33764497,Herndon L,42661584300,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew Senior Life & Harvard Medical School, Boston, MA, United States",Academic,42661584300
+33764497,Johnson KS,36552577100,"Department of Medicine, Duke University School of Medicine, Durham, NC, United States",Academic,36552577100
+33764497,Montoya A,54780229200,"Department of Medicine, University of Michigan School of Medicine, Ann Arbor, MI, United States",Academic,54780229200
+33764497,Myles L,57222561060,"Center for Health Policy and Evaluation in LTC, American Health Care Association, Washington, DC, United States",Professional,57222561060
+33764497,Gifford D,7102617491,"Center for Health Policy and Evaluation in LTC, American Health Care Association, Washington, DC, United States, Health Services, Policy and Practice, Brown University School of Public Health, Providence, RI, United States",Professional,7102617491
+33775510,Bigelow BF,57217220824,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57217220824
+33775510,Catlett CL,8242550800,"Department of Emergency Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,8242550800
+33775510,Clark JM,57209403965,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57209403965
+33775510,Flores-Miller A,55894087200,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,55894087200
+33775510,Golden SH,7102653518,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States, Johns Hopkins Medicine Office of Diversity, Inclusion and Health Equity, Baltimore, MD, United States",Academic,7102653518
+33775510,Hale WD,56661885800,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,56661885800
+33775510,Loss MJ,57188962470,"Department of Dermatology, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57188962470
+33775510,McCann NS,57222579702,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57222579702
+33775510,Moore AM,57222575888,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57222575888
+33775510,Mostafa HH,54781732100,"Department of Pathology, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,54781732100
+33775510,Page KR,7102902130,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,7102902130
 33775510,Saxton RE,57194655586,"Department of Medicine, Johns Hopkins University School of Medicine, Baltimore, MD, United States",Academic,57194655586
+33775510,Tolson TM,57221463718,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57221463718
+33775510,Phillips KH,57221478098,"Esperanza Center, Baltimore, MD, United States",Community,57221478098
+33812965,Amjad A,57223310024,"West Virginia Department of Health and Human Resources CharlestonWV, United States",Government,57223310024
+33812965,Atkins A,57216579290,"West Virginia Department of Health and Human Resources CharlestonWV, United States",Government,57216579290
+33812965,Hendricks B,57189017887,"West Virginia University, Department of Epidemiology, Morgantown, WV, United States, West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States",Academic,57189017887
+33812965,Kimble W,57221505466,"West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States",Academic,57221505466
+33812965,Paul R,35956823200,"University of North Carolina at Charlotte, Department of Public Health Sciences, Charlotte, NC, United States",Academic,35956823200
+33812965,Smith C,57223273144,"West Virginia University, Department of Epidemiology, Morgantown, WV, United States",Academic,57223273144
+33812965,Wen S,7201439663,"West Virginia University, Department of Biostatistics, Morgantown, WV, United States",Academic,7201439663
+33812965,Hodder S,35558534100,"West Virginia Clinical and Translational Sciences Institute, Morgantown, WV, United States, West Virginia University School of Medicine, Morgantown, WV, United States",Academic,35558534100
+33861873,Bardenheier BH,6603429198,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,6603429198
+33861873,Blackman CR,57217117866,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57217117866
+33861873,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
+33861873,Gravenstein SA,7003966799,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States, Division of Geriatrics and Palliative Medicine, Brown University Alpert Medical School, Providence, RI, United States",Academic,7003966799
+33861873,Gutman R,35891847400,"Department of Biostatistics, Brown University School of Public Health, Providence, RI, United States",Academic,35891847400
+33861873,Kosar CM,56030099400,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,56030099400
+33861873,McConeghy KW,36108886100,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States",Academic,36108886100
+33861873,Mor V,7102090811,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center Research Service, Providence, RI, United States",Academic,7102090811
+33861873,White EM,57201284143,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+33861873,Yang X,57210142538,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57210142538
+33861978,Harrison J,57217341894,"Department of Health Services, Policy, and Practice, School of Public Health, Brown University, Providence, RI, United States",Academic,57217341894
+33861978,Mor V,7102090811,"Department of Health Services, Policy, and Practice, School of Public Health, Brown University, Providence, RI, United States",Academic,7102090811
+33861978,Berry S,20336747600,"Hebrew SeniorLife, Hinda and Arthur Marcus Institute for Aging Research, & Harvard Medical School, Boston, MA, United States",Academic,20336747600
+33861978,Gifford D,7102617491,"Center for Health Policy Evaluation in Long-Term Care, American Health Care Association, Washington, DC, United States",Professional,7102617491
+33870242,Carter EB,55895259400,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,55895259400
+33870242,He M,8842663900,"Department of Pathology and Immunology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,8842663900
+33870242,Joshi CS,57202968470,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57202968470
+33870242,Mysorekar IU,6507498358,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States, Department of Pathology and Immunology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,6507498358
+33870242,Silverstein RB,57219552278,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57219552278
+33870242,Verma S,57218318041,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57218318041
+33929934,Ching LL,57192894008,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,57192894008
+33929934,Hsieh S-C,15044573600,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,15044573600
+33929934,Melish ME,57165902200,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Kapi’olani Medical Center for Women and Children, Honolulu, HI, United States, Department of Pediatrics, John A. Burns School of Medicine, Honolulu, HI, United States",Healthcare,57165902200
+33929934,Nerurkar VR,7003401025,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,7003401025
+33929934,Tsai W-Y,24399866200,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,24399866200
+33929934,Wang W-K,10938812100,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,10938812100
+33993265,Aung H,7004687497,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,7004687497
+33993265,Balazs AB,7101867957,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,7101867957
+33993265,Berry SD,20336747600,"Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States",Academic,20336747600
+33993265,Cameron CM,8770762400,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,8770762400
+33993265,Cameron MJ,7102724879,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,7102724879
+33993265,Canaday DH,6701913563,"Case Western Reserve University School of Medicine, Cleveland, OH, United States, Geriatric Research, Education and Clinical Center, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,6701913563
+33993265,Carias L,6602882989,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,6602882989
+33993265,Gravenstein S,7003966799,"Division of Geriatrics and Palliative Medicine, Alpert Medical School of Brown University, Providence, RI, United States, Center on Innovation in Long-Term Services and Supports, Providence Veterans Affairs Medical Center, Providence, RI, United States",Academic,7003966799
+33993265,Keresztesy D,57223592557,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223592557
+33993265,King CL,57273541500,"Case Western Reserve University School of Medicine, Cleveland, OH, United States, Division of Infectious Diseases, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,57273541500
+33993265,Lam EC,57201197202,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,57201197202
+33993265,Oyebanji OA,57223619842,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223619842
+33993265,Payne M,57223638097,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57223638097
+33993265,Rowley CF,8654801000,"Division of Infectious Diseases, Beth Israel Deaconess Medical Center, Boston, MA, United States",Healthcare,8654801000
+33993265,St Denis K,57222310846,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,57222310846
+33993265,Wilk D,57433725900,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57433725900
+33993265,Wilson B,56937637400,"Geriatric Research, Education and Clinical Center, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,56937637400
+34010526,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
+34010526,Mor V,7102090811,"Brown University School of Public Health, Providence, RI, United States",Academic,7102090811
+34010526,White EM,57201284143,"Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+34010526,Yang X,57210142538,"Brown University School of Public Health, Providence, RI, United States",Academic,57210142538
+34010526,Blackman C,57217117866,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57217117866
+34010526,Gravenstein S,7003966799,"Alpert Medical School of Brown University, Providence, RI, United States",Academic,7003966799
+34047758,Hotez PJ,7004958298,"Department of Pediatrics, National School of Tropical Medicine, Baylor College of Medicine, Texas Children's Hospital, Houston, United States, Department of Molecular Virology and Microbiology, National School of Tropical Medicine, Baylor College of Medicine, Texas Children's Hospital, Houston, United States",Healthcare,7004958298
+34047758,Narayan KMV,56726795700,"Hubert Department of Global Health, Emory Rollins School of Public Health, Emory School of Medicine, Atlanta, GA, United States",Academic,56726795700
+34081608,Bauer C,56992137400,"Department of Biostatistics and Data Science, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,56992137400
+34081608,de la Cerda I,57258346000,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,57258346000
+34081608,Fernandez ME,34769828800,"Department of Health Promotion and Behavior Sciences, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,34769828800
+34081608,Fisher-Hoch S,57205524437,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,57205524437
+34081608,Guajardo E,57226609034,"Cameron County Public Health, San Benito, TX, United States",Government,57226609034
+34081608,Lee M,55661493300,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,55661493300
+34081608,McCormick J,7202729955,"Department of Epidemiology, Human Genetics and Environmental Science, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,7202729955
+34081608,Reininger B,6603849738,"Department of Health Promotion and Behavior Sciences, School of Public Health, University of Texas Health Science Center at Houston, Brownsville, TX, United States",Academic,6603849738
+34081608,Zhang K,57222044013,"Department of Biostatistics and Data Science, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,57222044013
+34092431,Bardenheier BH,6603429198,"Brown University School of Public Health, Providence, RI, United States",Academic,6603429198
+34092431,Feifer RA,6603005716,"Genesis Healthcare, Kennett SquarePA, United States",Healthcare,6603005716
+34092431,Gutman R,35891847400,"Brown University School of Public Health, Providence, RI, United States",Academic,35891847400
+34092431,Mor V,7102090811,"Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,7102090811
+34092431,Nanda A,15834866400,"Warren Alpert Medical School, Brown University, Providence, RI, United States",Academic,15834866400
+34092431,Sarkar IN,15124590700,"Brown University School of Public Health, Providence, RI, United States, Warren Alpert Medical School, Brown University, Providence, RI, United States, Rhode Island Quality Institute, Providence, RI, United States",Professional,15124590700
+34092431,White EM,57201284143,"Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+34092431,Blackman C,57217117866,"Genesis Healthcare, Kennett SquarePA, United States",Healthcare,57217117866
+34092431,Gravenstein S,7003966799,"Brown University School of Public Health, Providence, RI, United States, Warren Alpert Medical School, Brown University, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,7003966799
+34092431,McConeghy K,36108886100,"Brown University School of Public Health, Providence, RI, United States, Providence Veterans Administration Medical Center, Center on Innovation in Long-Term Services and Supports, Providence, RI, United States",Academic,36108886100
+34143195,Belli HM,57209365128,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,57209365128
+34143195,Ogedegbe G,6602960850,"Institute for Excellence in Health Equity, New York University Grossman School of Medicine, New York, United States",Academic,6602960850
+34143195,Pina P,57224855499,"Family Health Centers, New York University Langone Health, New York, United States",Healthcare,57224855499
+34143195,Schoenthaler A,13908371800,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,13908371800
+34143195,Tutrow H,57224861523,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,57224861523
+34143195,Williams N,55615499000,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,55615499000
+34159841,Jagannathan R,56911970000,"Emory University School of Medicine, Atlanta, GA, United States",Academic,56911970000
+34159841,Klonoff DC,7005932893,"Mills-Peninsula Medical Center, San Mateo, CA, United States",Healthcare,7005932893
+34159841,Pasquel FJ,35105616100,"Emory University School of Medicine, Atlanta, GA, United States",Academic,35105616100
+34159841,Umpierrez GE,7003596797,"Emory University School of Medicine, Atlanta, GA, United States",Academic,7003596797
+34159841,Valk T,57498495100,"Admetsys Corporation, Research Division, Winter Park, FL, United States",Professional,57498495100
+34159841,Messler J,55586521200,"Glytec, Waltham, MA, United States",Professional,55586521200
+34264327,Barrett ES,36850389900,"Department of Biostatistics and Epidemiology, Rutgers School of Public Health, Rutgers Environmental and Occupational Health Sciences Institute, Piscataway, NJ, United States",Academic,36850389900
+34264327,Blaser MJ,35452136000,"Department of Medicine, Rutgers Robert Wood Johnson Medical School, Rutgers Center for Advance Biotechnology and Medicine, New Brunswick, NJ, United States, Department of and Pathology, Rutgers Robert Wood Johnson Medical School, Rutgers Center for Advance Biotechnology and Medicine, New Brunswick, NJ, United States",Academic,35452136000
+34264327,Crabtree BF,7006733030,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,7006733030
+34264327,Devance D,57226121039,"Rutgers, State University of New Jersey, University-Community Partnerships, Newark, United States",Academic,57226121039
+34264327,Ferrante JM,35737232200,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,35737232200
+34264327,Hill D,57226101415,"Rutgers School of Public Affairs and Administration, University-Community Partnerships, Newark, NJ, United States",Academic,57226101415
+34264327,Hudson SV,7201375470,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,7201375470
+34264327,Jimenez ME,57198326551,"Department of Pediatrics, Rutgers Robert Wood Johnson Medical School, 89 French St, New Brunswick, NJ  08901, United States, Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57198326551
+34264327,Lima D,57201190256,"Department of Pediatrics, Rutgers Robert Wood Johnson Medical School, 89 French St, New Brunswick, NJ  08901, United States",Academic,57201190256
+34264327,Macenat M,57226103648,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57226103648
+34264327,Martinez Alcaraz E,57199725284,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57199725284
+34264327,Panettieri RA,57215224223,"Rutgers Institute for Translational Medicine and Science, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,57215224223
+34264327,Pellerano MB,55342047200,"Department of Family Medicine and Community Health, Rutgers Robert Wood Johnson Medical School, New Brunswick, NJ, United States",Academic,55342047200
+34264327,Rivera-Núñez Z,35811377600,"Department of Biostatistics and Epidemiology, Rutgers School of Public Health, Rutgers Environmental and Occupational Health Sciences Institute, Piscataway, NJ, United States",Academic,35811377600
+34274126,Fujimoto AB,57218675513,"School of Industrial and Systems Engineering, Georgia Institute of Technology, 755 Ferst Dr. NW, Atlanta, GA  30332, United States",Academic,57218675513
+34274126,Keskinocak P,6603542392,"School of Industrial and Systems Engineering, Georgia Institute of Technology, 755 Ferst Dr. NW, Atlanta, GA  30332, United States, Department of Environmental Health, Rollins School of Public Health, Emory University, 1518 Clifton Rd. NE, Atlanta, GA  30322, United States",Academic,6603542392
+34274126,Yildirim I,15841191100,"Department of Pediatrics, Section of Infectious Diseases and Global Health, Yale School of Medicine and Yale Institute of Global Health, 1 Church Street, New Haven, CT  06510, United States",Academic,15841191100
+34294425,Akintobi T,6506993064,"Department of Community Health & Preventive Medicine, Morehouse School of Medicine, Atlanta, Georgia, Georgia",Academic,6506993064
+34294425,Bednarczyk RA,26421597500,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,26421597500
+34294425,Narayan KMV,56726795700,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,56726795700
+34294425,Patel SA,44861686400,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia, Hubert Department of Global Health, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,44861686400
+34294425,Vashist K,57222625524,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,57222625524
+34375655,Bethea L,57234670600,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,57234670600
+34375655,Feifer RA,6603005716,"Genesis HealthCare, Kennett Square, PA, United States",Healthcare,6603005716
+34375655,White EM,57201284143,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+34449885,Berry SD,20336747600,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States, Department of Medicine, and Harvard Medical School, Beth Israel Deaconess Medical Center, Boston, MA, United States",Academic,20336747600
+34449885,Hanson LC,7201657480,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States",Academic,7201657480
+34449885,Harrison J,57217341894,"Department of Health Services, Policy, and Practice, Brown University, School of Public Health, Providence, RI, United States",Academic,57217341894
+34449885,Kelley CJ,57216370590,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States",Academic,57216370590
+34449885,Niznik JD,57193723605,"Division of Geriatric Medicine and Center for Aging and Health, University of North Carolina at Chapel Hill, School of Medicine, Chapel Hill, NC, United States, Division of Pharmaceutical Outcomes and Policy, University of North Carolina at Chapel Hill, Eshelman School of Pharmacy, Chapel Hill, NC, United States, Center for Health Equity Research and Promotion, Veterans Affairs (VA) Pittsburgh Healthcare System, Pittsburgh, PA, United States",Academic,57193723605
+34449885,Porter L,57253157300,"National Association of Health Care Assistants (NAHCA), Carl Junction, MO, United States",Professional,57253157300
+34449885,Syme M,35103612800,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States",Academic,35103612800
+34449885,White EM,57201284143,"Center for Gerontology and Healthcare Research, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+34464194,Hammitt LL,35290709200,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Shiprock, NM, United States",Academic,35290709200
+34464194,Reid R,7401757793,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Shiprock, NM, United States",Academic,7401757793
+34464194,Vigil DE,57205355603,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Chinle, AZ, United States",Academic,57205355603
+34465306,Balls-Berry JE,36678672500,"Department of Neurology, Division of Memory and Aging, Washington University in St. Louis, St. Louis, MO, United States",Academic,36678672500
+34465306,Gurnett CA,6701464580,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,6701464580
+34465306,Head R,16180279600,"Department of Genetics, Washington University in St. Louis, St. Louis, MO, United States",Academic,16180279600
+34465306,Lai AM,30767629500,"Department of Medicine, Washington University in St. Louis, St. Louis, MO, United States",Academic,30767629500
+34465306,Morris SM,57191870727,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,57191870727
+34465306,Neidich JA,6602770204,"Department of Pathology and Immunology, Washington University in St. Louis, St. Louis, MO, United States",Academic,6602770204
+34465306,Newland JG,7005609345,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, United States",Academic,7005609345
+34465306,Prener CG,55440163000,"Department of Sociology and Anthropology, Saint Louis University, St. Louis, MO, United States",Academic,55440163000
+34465306,Sherby MR,57247109400,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,57247109400
+34465306,Walsh TJ,57247761200,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, United States",Academic,57247761200
+34465306,Baldenweck M,57247975600,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247975600
+34465306,Bono K,57247975700,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247975700
+34465306,Brodsky VB,57247761300,"Department of Pathology and Immunology, Washington University in St. Louis, St. Louis, MO, USA",Academic,57247761300
+34465306,Caburnay CA,6508155151,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,6508155151
+34465306,Constantino JN,7003357598,"Department of Psychiatry, Washington University in St. Louis, St. Louis, MO",Academic,7003357598
+34465306,Dougherty NL,55978805000,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,55978805000
+34465306,Dubois JM,57194406801,"Department of Medicine, Washington University in St. Louis, St. Louis, MO, USA",Academic,57194406801
+34465306,Fritz SA,24504213100,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,24504213100
+34465306,Gotto GS,55666330900,"Institute for Human Development, University of Missouri-Kansas City, Kansas City, MO",Academic,55666330900
+34465306,Imbeah A,57218991877,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, USA",Academic,57218991877
+34465306,Kalb LG,36664663700,"Kennedy Krieger Institute, Johns Hopkins Bloomberg School of Public Health, Baltimore, MD, United States",Academic,36664663700
+34465306,Liu J,57207916193,"Department of Surgery, Washington University in St. Louis, St. Louis, MO",Academic,57207916193
+34465306,Maricque BB,36731316800,"Department of Neurology, Division of Memory and Aging, Washington University in St. Louis, St. Louis, MO, USA",Academic,36731316800
+34465306,McKay VR,56075055300,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,56075055300
+34465306,Mueller NB,57219090924,"Brown School Evaluation Center, Washington University in St Louis, St Louis, MO, United States",Academic,57219090924
+34465306,Myers LS,57247761400,"Kennedy Krieger Institute, Baltimore, MD",Academic,57247761400
+34465306,Poor TJ,37031890800,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,37031890800
+34465306,Powell BJ,57206489093,"Institute for Human Development, University of Missouri-Kansas City, Kansas City, MO",Academic,57206489093
 34465306,Schlaggar BL,6603913083,"Kennedy Krieger Institute, Baltimore, MD",Academic,6603913083
 34465306,Schmidt A,57248618200,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,57248618200
-34143195,Schoenthaler A,13908371800,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,13908371800
-34465306,Sherby MR,57247109400,"Department of Neurology, Division of Pediatric and Developmental Neurology, Washington University in St. Louis, 660 S. Euclid Avenue Campus, Box 8111, St. Louis, MO  63110, United States",Academic,57247109400
-33870242,Silverstein RB,57219552278,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57219552278
-33812965,Smith C,57223273144,"West Virginia University, Department of Epidemiology, Morgantown, WV, United States",Academic,57223273144
 34465306,Snider E,57247975800,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,57247975800
-33577743,Sood A,57203164460,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Miners’ Wellness Tele–Extension for Community Health Outcomes, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Office of Faculty Affairs and Career Development, School of Medicine, University of New Mexico, Albuquerque, NM, United States, Miners Colfax Medical Center, Raton, NM, United States",Healthcare,57203164460
-33993265,St Denis K,57222310846,"Ragon Institute of Massachusetts General Hospital, Massachusetts Institute of Technology and Harvard, Cambridge, MA, United States",Academic,57222310846
-34449885,Syme M,35103612800,"Hinda and Arthur Marcus Institute for Aging Research, Hebrew SeniorLife, Boston, MA, United States",Academic,35103612800
-33471114,Thirumurthy H,24559254500,"Division of Health Policy, University of Pennsylvania Perelman, School of Medicine, Philadelphia, United States",Academic,24559254500
-33775510,Tolson TM,57221463718,"Johns Hopkins Health System, Johns Hopkins Medicine, Baltimore, MD, United States",Healthcare,57221463718
-34465306,Traughber MC,57505973700,"Division of Evaluation and Research, Special School District of St. Louis County, MO",School,57505973700
-33929934,Tsai W-Y,24399866200,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,24399866200
-34143195,Tutrow H,57224861523,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,57224861523
-33323475,Umpierrez GE,7003596797,"Division of Endocrinology, Metabolism, and Lipids, Emory University School of Medicine, Atlanta, GA, United States",Academic,7003596797
-34159841,Umpierrez GE,7003596797,"Emory University School of Medicine, Atlanta, GA, United States",Academic,7003596797
-33577743,Upson D,7004054150,"Division of Pulmonary, Critical Care, Sleep and Allergy, School of Medicine, University of New Mexico, Albuquerque, NM, United States, New Mexico Veterans Affairs Health Care Services, 111A-Pulm, 1501 San Pedro SE, Albuquerque, NM  87108, United States",Healthcare,7004054150
-34159841,Valk T,57498495100,"Admetsys Corporation, Research Division, Winter Park, FL, United States",Professional,57498495100
 34465306,van Stone M,6507192326,"Kennedy Krieger Institute, Baltimore, MD",Academic,6507192326
-34294425,Vashist K,57222625524,"Department of Epidemiology, Rollins School of Public Health, Emory University, Atlanta, Georgia, Georgia",Academic,57222625524
-33870242,Verma S,57218318041,"Department of Obstetrics and Gynecology, Washington University in St. Louis School of Medicine, St. Louis, MO  63110, United States",Academic,57218318041
 34465306,Vestal L,57248193700,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,57248193700
-34464194,Vigil DE,57205355603,"Center for American Indian Health, Johns Hopkins Bloomberg School of Public Health, Chinle, AZ, United States",Academic,57205355603
-34465306,Walsh TJ,57247761200,"Department of Pediatrics, Division of Pediatric Infectious Diseases, Washington University in St. Louis, St. Louis, MO, United States",Academic,57247761200
-33929934,Wang W-K,10938812100,"Department of Tropical Medicine, Medical Microbiology and Pharmacology, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States, Pacific Center for Emerging Infectious Diseases, John A. Burns School of Medicine, University of Hawaii at Manoa, Honolulu, HI, United States",Academic,10938812100
-33812965,Wen S,7201439663,"West Virginia University, Department of Biostatistics, Morgantown, WV, United States",Academic,7201439663
-34092431,White EM,57201284143,"Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
-34010526,White EM,57201284143,"Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
-34449885,White EM,57201284143,"Center for Gerontology and Healthcare Research, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
-34375655,White EM,57201284143,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
-33861873,White EM,57201284143,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57201284143
+34465306,Traughber MC,57505973700,"Division of Evaluation and Research, Special School District of St. Louis County, MO",School,57505973700
 34465306,Wilcher-Roberts M,57248618300,"Brown School of Social Work, Washington University in St. Louis, St. Louis, MO",Academic,57248618300
-33993265,Wilk D,57433725900,"Case Western Reserve University School of Medicine, Cleveland, OH, United States",Academic,57433725900
-34143195,Williams N,55615499000,"Department of Population Health, New York University Grossman School of Medicine, New York, United States",Academic,55615499000
-33993265,Wilson B,56937637400,"Geriatric Research, Education and Clinical Center, Cleveland Veterans Affairs Medical Center, Cleveland, OH, United States",Academic,56937637400
-34010526,Yang X,57210142538,"Brown University School of Public Health, Providence, RI, United States",Academic,57210142538
-33861873,Yang X,57210142538,"Department of Health Services, Policy, and Practice, Brown University School of Public Health, Providence, RI, United States",Academic,57210142538
-34274126,Yildirim I,15841191100,"Department of Pediatrics, Section of Infectious Diseases and Global Health, Yale School of Medicine and Yale Institute of Global Health, 1 Church Street, New Haven, CT  06510, United States",Academic,15841191100
-34081608,Zhang K,57222044013,"Department of Biostatistics and Data Science, School of Public Health, University of Texas Health Science Center at Houston, Houston, TX, United States",Academic,57222044013

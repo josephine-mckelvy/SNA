@@ -33,7 +33,7 @@ author_affil <- read_excel("2021.09.23 Author_Affiliations.xlsx")
 
 # create new variable (i.e., author_id2) (in a new dataframe, author-affil) where, if author_id is missing, enter the author's name for author_id; else print the existing author_id:
 author_affil <- author_affil %>%
-  mutate(author_id2 = case_when(is.na(author_id) ~ author_name , 
+  mutate(author_id2 = case_when(is.na(author_id) ~ author_name, 
                                 TRUE ~ author_id))
 # check--are there any missing author_id or author_id2?:
 author_affil %>%
@@ -889,7 +889,7 @@ author_affil_wide <- author_affil_wide  %>%
 # define the attributes that are shared across the two dataframes (i.e., ids, type):
 shared_identifiers <- c("id", "node")
 
-# append or create a single, shared dataframe, stacking author attributes on top of publication attributes
+# append or create a single, shared dataframe, stacking author attributes on top of publication attributes (i.e., id, node)
 stacked.df <- bind_rows(author_affil_wide %>% select(all_of(shared_identifiers)), 
                     pub_attributes %>% select(all_of(shared_identifiers)) )
 
@@ -938,14 +938,21 @@ names(type) <- attributes_author_pub$id
 # now creating network in igraph, with types set to type and 
 # edges grabbed from sender/receiver columns, 
 # transpose and make the 2 column matrix (i.e., the sender and receiver columns)into a vector (i.e., edge):
+
+author_pub_edgelist <- author_pub_edgelist %>%
+  mutate(sender2 = as.character(author_pub_edgelist$sender))
+
 edge <- c(t(author_pub_edgelist %>% 
-              select(sender, receiver)))
+              select(sender2, receiver)))
+
 edge_numeric <- as.numeric(factor(edge))
 levels <- levels(factor(edge))
 
 # vector of senders (author_id2) and receivers (PMIDs)
 
-coauthorship_net <- make_bipartite_graph(types = type, edges = edge, directed = FALSE)
+coauthorship_net <- make_bipartite_graph(edges = edge, types = attributes_author_pub$type_binary)
+#which vertex/node exists in edge, but not type?
+ setdiff(edge, type)
 
 # check to make this sure this looks right and grab useful indicator vectors:
 
