@@ -846,7 +846,7 @@ names(list_of_projects) <- pmids
 save(list_of_projects, file = "2021.09.23 Project_Publication_List.Rdata")
 ```
 
-## 7. Create Co-Authorship Network--finally!
+## 7. Create Co-Authorship Network from the inputs--not the plot yet
 
 ```{r}
 # Goal: to construct basic igraph objects with:
@@ -938,7 +938,7 @@ names(type) <- attributes_author_pub$id
 # now creating network in igraph, with types set to type and 
 # edges grabbed from sender/receiver columns, 
 # transpose and make the 2 column matrix (i.e., the sender and receiver columns)into a vector (i.e., edge):
-
+# but first, for some reason, the author_id2 being pulled in are numeric and not character. create a new variable that is character and pull that in for the edges so that it matches the author_id2 in the named vector, type.
 author_pub_edgelist <- author_pub_edgelist %>%
   mutate(sender2 = as.character(author_pub_edgelist$sender))
 
@@ -951,23 +951,22 @@ edge <- c(t(author_pub_edgelist %>%
 # vector of senders (author_id2) and receivers (PMIDs)
 
 coauthorship_net <- make_bipartite_graph(edges = edge, types = type)
-#which vertex/node exists in edge, but not type?
- setdiff(edge, type)
+#error: which vertex/node exists in edge, but not type?
+# setdiff(edge, type)
 
 # check to make this sure this looks right and grab useful indicator vectors:
-
 type_from_igraph <- V(coauthorship_net)$type
 table(type_from_igraph)
 
-#identify which are authors
+#identify which are authors:
 is_author_type <- type_from_igraph == FALSE
 
-#identify which are publications
+#identify which are publications:
 is_publication_type <- type_from_igraph == TRUE
 
-# Putting attributes onto object:
+#put attributes onto object:
 coauthorship_net <- set_vertex_attr(graph = coauthorship_net, 
-                                   name = "org_final", 
+                                   name = "final_type", 
                                    value = attributes_author_pub$final_type)
 
 #getting name of publication as a vertex attribute
@@ -981,10 +980,477 @@ save(coauthorship_net, attributes_author_pub,
      file = "2021.09.23 Coauthorship Network igraph.Rdata")
 ```
 
-## 8.
+## 8. Create initial plots - finally!
 
 ```{r}
+# Goal: to produce some very initial network images and summary statistics
+# with a focus on organizational homophily, or connections # based on author-publication ties, 
+# between different types of organizations.
 
+# Questions to answer: 
+# How rare/common are cross organizational ties?
+# What pattern of cross-organizational ties do we tend to see? 
+# Do we ever see ties involving community partners?
+# Under what conditions do we see ties involving community partners?
+
+# install (for the first time only) and load packages:
+#install.packages("tidyverse")
+#install.packages("igraph")
+#install.packages("qgraph")
+
+library(tidyverse)
+library(igraph)
+library(qgraph)
+
+# load (or import) igraph file:
+load("2021.09.23 Coauthorship Network igraph.Rdata")
+
+# extract the affiliation matrix:
+affil_matrix <- as_incidence_matrix(coauthorship_net, sparse = F)
+
+type <- V(coauthorship_net)$type
+
+#identify which nodes are authors:
+is_author_type <- type == FALSE
+
+#identify which nodes are publications:
+is_publication_type <- type == TRUE
+
+####################################
+# Basic features of network        #
+# (to understand and plot network) #
+####################################
+
+# conduct component analysis, looking at reachability
+components <- components(coauthorship_net)
+
+# identify which components (and thus nodes) are based on single paper, 
+# i.e., not so interesting a structure to examine. 
+num_pubs <- function(mems, types = type, x) {
+  sum(types[which(mems == x)])
+}
+
+num_pubs_in_comp <- unlist(lapply(1:components$no, FUN = num_pubs, 
+                                         mems = components$membership, types=type))
+
+# a quick check:
+# which(components$membership==3)
+
+#############################
+# Initial exploratory plots # 
+#############################
+
+# Three versions of how we can plot: 
+# A) author-publication
+# B) author-author
+# C) publication-publication
+
+#1. Node size and color in a basic plot of A)
+
+# take off node labels:
+V(coauthorship_net)$label <- NA
+
+# set size of all nodes to 6:
+#V(coauthorship_net)$size <- 6 
+
+# or make the author nodes smaller than the publication nodes:
+V(coauthorship_net)$size[is_author_type] <- 1.75
+
+# make the publication nodes larger than the author nodes:
+V(coauthorship_net)$size[is_publication_type] <- 3.75
+  
+# set the color, by node type: 
+# authors (or FALSE) to UNC blue 
+unc_blue <- rgb(red = 75, green = 156, blue = 211, 
+                alpha = 1 * 255, maxColorValue = 255)
+# pubs (or TRUE) to Duke blue
+duke_blue <- rgb(red = 0, green = 83, blue = 155,
+                 alpha = 1 * 255, maxColorValue = 255)
+# set how each node will be colored:
+base_color <- case_when(is_author_type ~  unc_blue,
+                        is_publication_type ~ duke_blue)
+
+V(coauthorship_net)$color <- base_color
+
+# set node borders equal to fill:
+V(coauthorship_net)$frame.color <- V(coauthorship_net)$color
+
+# other possible options: 
+# lighten up the edges a bit?
+#E(coauthorship_net)$color <- rgb(.5, .5, .5, .25)
+
+# make authors more transparent? 
+#V(affil_net96_noisolates)$color[is_student_type] <- rgb(1, 0, 0, .1)
+
+plot(coauthorship_net)
+
+##################################################################
+
+#2. Add a layout and a legend
+
+set.seed(109)
+layout1 <- layout_with_fr(coauthorship_net)
+
+# create a blank, placeholder PDF:
+pdf(paste("2021.09.23 author_publication_network.pdf")) 
+
+#plot the network with the layout
+plot(coauthorship_net, layout = layout1, margin = 0,
+     main = "Author-Publication Network, Base Plot")
+
+# for legend with same-size nodes:
+#legend("bottomright", col = c(unc_blue, duke_blue), legend = c("Author", "Publication"),
+#       pch = 21, pt.bg = c(unc_blue, duke_blue))
+
+# for legend with actual-size nodes: 
+size_vec <-sort(unique(V(coauthorship_net)$size))
+scaled <- 1 + ((2-1) * (size_vec - min(size_vec) ) / (  max(size_vec) - min(size_vec) ) )
+legend("bottomleft", col = c(unc_blue, duke_blue), legend = c("Author", "Publication"),
+       pch = 21, pt.bg = c(unc_blue, duke_blue), pt.cex = scaled, cex = .9)
+
+# close off graphic device:
+dev.off()
+##################################################################
+
+#3. Add titles for deep dive figures:
+V(coauthorship_net)$vertex.label <- V(coauthorship_net)$name
+V(coauthorship_net)$vertex.label[V(coauthorship_net)$type==FALSE] <-NA
+
+plot(coauthorship_net, layout = layout1, margin = 0,
+     main = "Author-Publication Network, Base Plot", 
+     vertex.label = V(coauthorship_net)$vertex.label,
+     vertex.label.cex=.8)
+
+pdf(paste("2021.09.23 author_publication_network_with_labels.pdf"))
+
+#if wanted to try and tweak the layout 'by hand' using ported network package code:
+
+#e <- get.edgelist(coauthorship_net, names=FALSE)
+#l <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(coauthorship_net),
+#                                       area = 1.5*(vcount(coauthorship_net)^2),
+#                                       repulse.rad = (vcount(coauthorship_net)^3.0))
+
+#plot(coauthorship_net, layout = l, margin = 0,
+#     main = "Author-Publication Network, Base Plot")
+
+#############################################################
+
+# 4. set the node color, by type of affiliation:
+# academic is UNC blue
+# community is orange
+# government is dark gray
+# healthcare is eggplant
+# professional is teal
+# school spring green (?)
+# pub is still duke blue
+
+orange <- rgb(red = 244, green = 126, blue = 40, 
+              alpha = 1 * 255, maxColorValue = 255)
+
+dark_gray <- rgb(red = 71, green = 77, blue = 87, 
+                 alpha = 1 * 255, maxColorValue = 255)
+
+eggplant <- rgb(red = 81, green = 12, blue = 93, 
+                alpha = 1 * 255, maxColorValue = 255)
+
+teal <- rgb(red = 20, green = 169, blue = 162, 
+            alpha = 1 * 255, maxColorValue = 255)
+
+spring_green <- rgb(red = 157, green = 200, blue = 88, 
+                    alpha = 1 * 255, maxColorValue = 255)
+
+color_org_based <- case_when(V(coauthorship_net)$final_type == "Academic" ~ unc_blue,
+                             V(coauthorship_net)$final_type == "Community" ~ orange, 
+                             V(coauthorship_net)$final_type == "Government" ~ dark_gray,
+                             V(coauthorship_net)$final_type == "Healthcare" ~ eggplant,
+                             V(coauthorship_net)$final_type == "Professional" ~ teal,
+                             V(coauthorship_net)$final_type == "School" ~ spring_green,
+                             is.na(V(coauthorship_net)$final_type)  ~ duke_blue)
+
+V(coauthorship_net)$color <- color_org_based
+V(coauthorship_net)$frame.color <- V(coauthorship_net)$color
+
+pdf(paste("2021.09.23 author_publication_network_colored_by_author_affiliation.pdf"))
+
+plot(coauthorship_net, layout = layout1, margin = c(0, .0, 0, 0),
+     main = "Author-Publication Network, by Type of Affiliation")        
+
+col_list2 <- c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue)
+scaled2 <- c(rep(scaled[1], length(col_list2) - 1), scaled[2])
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School", "Publication"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = scaled2, cex = .80)
+
+dev.off()
+
+#############################################################
+
+# 5. Reduce plot to components, with 2 or more publications
+
+#identify which nodes are in components that have less than 2 publications
+
+multi_pubs <-components$membership %in% which(num_pubs_in_comp < 2) 
+
+V(coauthorship_net)$multi_pubs  <- multi_pubs 
+V(coauthorship_net)$comp <- components$membership
+
+ids_multi_pubs <- which(multi_pubs)
+
+# create a subgraph of the full network that include nodes in components w/ 2+ pubs: 
+coauthorship_net_2pubs <- delete_vertices(coauthorship_net, ids_multi_pubs )
+
+set.seed(113)
+layout2 <- layout_with_fr(coauthorship_net_2pubs)
+
+pdf(paste("2021.09.23 author_publication_network_2pubs_in_component.pdf"))
+
+plot(coauthorship_net_2pubs, layout = layout2, margin = 0, 
+     main = "Author-Publication Network, Components with >= 2 Publications")        
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School", "Publication"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = scaled2, cex = .80)
+
+dev.off()
+
+#############################################################
+# B) the author-author network
+
+# construct the one-mode projection:
+one_mode_nets <- bipartite_projection(coauthorship_net)
+# and grab the author-author network:
+author_net <- one_mode_nets$proj1
+
+# look at the weighted matrix:
+author_mat <- as_adjacency_matrix(graph = author_net, attr = "weight", sparse = F)
+table(author_mat)
+
+# 1. plot just authors,  with weights
+plot(author_net , layout = layout_with_fr, margin = 0,
+     edge.width = E(author_net)$weight)        
+
+# 2. plot binary network, no weights, and make nodes smaller with lighter borders
+V(author_net)$size <- 1
+E(author_net)$color <- rgb(.5, .5, .5, .10)
+
+plot(author_net , layout = layout_with_fr, margin = 0,
+     edge.width = 1)        
+
+# 3. plot the nth largest components
+set_number_ofcomponents <- 10
+largest_components <- which(components$csize %in% sort(components$csize, decreasing=T)[1:set_number_ofcomponents ])
+
+author_net_largecomponents <- delete_vertices(author_net, 
+                                              which( !(V(author_net)$comp %in% largest_components) ))
+
+V(author_net_largecomponents)$size <- 1.5
+
+E(author_net_largecomponents)$color <- rgb(.5, .5, .5, .10)
+
+plot(author_net_largecomponents, layout = layout_with_fr, margin = 0,
+     edge.width = 1)   
+
+# 4a. look at nodes in component with at least 2 pubs: 
+author_net_2pubs <- delete_vertices(author_net, 
+                                    which( V(author_net)$multi_pubs) )
+
+set.seed(10)
+layout3 <- layout_with_fr(author_net_2pubs)
+
+
+pdf(paste("2021.09.23 author_author_network_2pubs_in_component.pdf"))
+
+plot(author_net_2pubs, layout = layout3, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, Components with >= 2 Publications")   
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = 1, cex = .80)
+
+dev.off()
+#############################################################
+
+#alternative layout?
+e <- get.edgelist(author_net_2pubs, names=FALSE)
+
+#default:
+#l <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(author_net_2pubs),
+#                                       area = 1*(vcount(author_net_2pubs)^2),
+#                                       repulse.rad = (vcount(author_net_2pubs)^3.0))
+
+#increasing area a bit: 
+l <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(author_net_2pubs),
+                                       area = 2.7*(vcount(author_net_2pubs)^2),
+                                       repulse.rad = (vcount(author_net_2pubs)^3.0))
+
+pdf(paste("2021.09.23 author_author_network_2pubs_in_component_alt_layout.pdf"))
+
+plot(author_net_2pubs, layout = l, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, Components with >= 2 Publications")   
+
+legend("bottomright", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = 1, cex = .80)
+
+dev.off()
+
+#############################################################
+
+# 4b. look at nodes in component with at least 2 pubs (one color for nodes): 
+pdf(paste("2021.09.23 author_author_network_2pubs_in_component_one_color.pdf"))
+
+  plot(author_net_2pubs, layout = l, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, Components with >= 2 Publications",
+     vertex.color = unc_blue, vertex.frame.color = unc_blue)   
+
+dev.off()
+
+#############################################################
+
+# 5. plot all nodes with alternative layout:
+e <- get.edgelist(author_net, names=FALSE)
+
+l2 <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(author_net),
+                                       area = 2.7*(vcount(author_net)^2),
+                                       repulse.rad = (vcount(author_net)^3.0))
+
+pdf(paste("2021.09.23 author_author_network_alt_layout.pdf"))
+
+plot(author_net, layout = l2, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, Colored by Organization")   
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = 1, cex = .80)
+
+dev.off()
+
+#############################################################
+
+#same thing but one color
+pdf(paste("2021.09.23 author_author_network_alt_layout_one_color.pdf"))
+
+plot(author_net, layout = l2, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, Colored by Organization",
+     vertex.color = unc_blue, vertex.frame.color = unc_blue)   
+
+dev.off()
+
+#############################################################
+
+# 6. Just the biggest component? 
+
+biggest_comp <- which(components$csize == max(components$csize))
+
+author_net_maincomponent <- delete_vertices(author_net, 
+                                            which( V(author_net)$comp != biggest_comp) )
+
+V(author_net_maincomponent)$size <- 1.5
+
+E(author_net_maincomponent)$color <- rgb(.5, .5, .5, .10)
+
+
+set.seed(113)
+layout4 <- layout_with_fr(author_net_maincomponent)
+
+pdf(paste("2021.09.23 author_author_network_largest_component.pdf"))
+
+plot(author_net_maincomponent, layout = layout4, margin = 0,
+     edge.width = 1, main = "Author-Author Network, Largest Component")   
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = 1, cex = .80)
+
+dev.off()
+
+#############################################################
+
+# 7. Include just repeat interactions, so coauthors at least twice as edge, remove all others
+
+# keep those edges that have weights>1:
+author_net_repeat <- delete_edges(author_net, which(E(author_net)$weight<2))
+
+# delete any authors with no ties:
+author_net_repeat <- delete_vertices(author_net_repeat, 
+                                  which(degree(author_net_repeat)<1))
+
+# plot:
+#E(author_net_repeat)$color <- rgb(.5, .5, .5, .10)
+
+e <- get.edgelist(author_net_repeat, names=FALSE)
+
+#default:
+#l <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(author_net_2pubs),
+#                                       area = 1*(vcount(author_net_2pubs)^2),
+#                                       repulse.rad = (vcount(author_net_2pubs)^3.0))
+
+#increasing area a bit: 
+l3 <- qgraph.layout.fruchtermanreingold(e, vcount=vcount(author_net_repeat),
+                                        area = 2.7*(vcount(author_net_repeat)^2),
+                                        repulse.rad = (vcount(author_net_repeat)^3.0))
+
+E(author_net_repeat)$color = "light gray"
+V(author_net_repeat)$size = 2
+
+pdf(paste("2021.09.23 author_author_network_repeat_collaborations.pdf"))
+
+plot(author_net_repeat ,  margin = 0,
+     edge.width = 1, layout = l3)        
+
+legend("bottomleft", col = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green), 
+       legend = c("Academic", "Community", "Government", "Healthcare", "Professional", "School"),
+       pch = 21, pt.bg = c(unc_blue, orange, dark_gray, eggplant, teal, spring_green, duke_blue),
+       pt.cex = 1, cex = .80)
+
+dev.off()
+
+#############################################################
+
+#8. plot author-author network, by publications:
+author_net
+edges_coauthor_net <- as_edgelist(coauthorship_net)
+
+relabel_function <- function(edges_coauthor_net, ids){
+  lab <- paste(edges_coauthor_net[edges_coauthor_net[,1] == ids,2], 
+               collapse = "_")
+}
+
+paper_ids <- unlist(lapply(V(author_net)$name, relabel_function, 
+       edges_coauthor_net=edges_coauthor_net))
+
+paper_ids_factor <- factor(paper_ids, labels=1:length(unique(paper_ids )))
+V(author_net)$paper_ids_factor  <- paper_ids_factor 
+
+paper_ids_dat <- tibble(paper_ids=paper_ids,
+  paper_ids_factor= paper_ids_factor )
+  
+pdf(paste("2021.09.23 author_network_with_pub_labels.pdf"))
+
+plot(author_net, layout = l2, margin = 0,
+     edge.width = 1, 
+     main = "Author-Author Network, labels",
+     vertex.color = unc_blue, vertex.frame.color = unc_blue,
+     vertex.label = paper_ids_factor, vertex.label.cex= .75)   
+
+dev.off()
+
+#############################################################
+
+#paper_ids_dat %>% filter(paper_ids_factor == 30) %>% select(paper_ids)
+#pubs %>% filter(pmid=="34010526") %>% select("title")
 ```
 
 ## 9.
